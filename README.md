@@ -1,6 +1,6 @@
 # Scientific Research Agent Design
 
-当前实现：**v0.5.0 execution-first Supervisor**。确定性常驻调度器负责依赖、资源、幂等提交和续跑；AI worker 负责缺契约、诊断修复及科研解读。技术产物校验后放行计算，正式报告与发布独立验收。所有 eligible 模型保留在依赖矩阵，正常规划不耗失败额度；每任务/阶段独立 3 次修复调用及 3 次验证后重试；连续 2 次无实质规划进展显示 stalled，不伪称运行。见 [架构与迁移](skills/scientific-research-project/references/execution_first_architecture.md)、[安装](INSTALL.md)。
+当前实现：**v0.5.1 execution-first Supervisor（含深度研究前置门槛）**。确定性常驻调度器负责依赖、资源、幂等提交和续跑；AI worker 负责缺契约、诊断修复及科研解读。技术产物校验后放行计算，正式报告与发布独立验收。所有 eligible 模型保留在依赖矩阵，正常规划不耗失败额度；每任务/阶段独立 3 次修复调用及 3 次验证后重试；连续 2 次无实质规划进展显示 stalled，不伪称运行。见 [架构与迁移](skills/scientific-research-project/references/execution_first_architecture.md)、[安装](INSTALL.md)。
 
 这是本项目科研智能体的唯一源代码目录。它同时维护：
 
