@@ -3,9 +3,24 @@
 > **Auditable · Explainable · Reproducible · Continuously Executable**  
 > **可审计 · 可解释 · 可复现 · 持续执行**
 
-本项目是一个面向真实科研工作的通用 Skill + Supervisor Agent 框架。它不是单纯的聊天机器人，也不是只会提交作业的调度器，而是把“提出问题—深度调研—制定方案—配置环境与数据—执行—质控—解释—反思—推进下一步”固化为可追踪的科研工作流。
+本项目是一套面向真实科研项目的自动化科研 Skill + Supervisor Agent。它把研究目标、文献证据、实验/计算方案、软件与数据版本、任务依赖、执行资源、质量控制和科学结论组织成一个可持续运行的项目系统。其独特之处是：先通过深度研究和用户讨论冻结问题，再按完整计划自动执行；每个结果都绑定方法、数据、环境、哈希、QC、图表和解释；失败时诊断后定向修复；发现异常时比较预期与证据并决定补充实验或暂停讨论。
 
-This project provides a general-purpose Skill and Supervisor Agent for real scientific workflows. It is not merely a chatbot or a job scheduler: it turns the complete research loop—question, literature appraisal, protocol design, software/data preparation, execution, QC, interpretation, reflection, and next-step planning—into a traceable, restartable system.
+This project is an automation layer for real scientific projects: a Skill plus a Supervisor Agent that connects research goals, literature evidence, protocols, software/data versions, dependencies, execution resources, QC, and scientific conclusions. Its distinctive design is a gated and auditable lifecycle: perform deep research and user alignment before freezing the plan; execute the complete registered workflow; bind every result to methods, data, environments, hashes, QC, figures, and interpretation; diagnose before retrying; and use expectation-versus-evidence reflection to trigger supplementary experiments or discussion.
+
+## 与其他科研智能体的区别 / Difference from other research agents
+
+Robin、Google AI Co-Scientist 等系统强调多智能体协作、假设生成、文献综合和方案建议。本项目在这些能力之外，专门强化科研项目的“执行与证据层”：
+
+| 维度 / Dimension | 本项目 / This framework | Robin / Co-Scientist 类系统 |
+|---|---|---|
+| 研究入口 | 用户讨论 → 初步方案 → 深度研究门槛 → 正式冻结 | 通常从问题或假设生成开始 |
+| 项目管理 | 五个根文件、任务 registry、依赖 DAG、持久状态 | 侧重代理轨迹和候选方案 |
+| 执行可追溯性 | 每次运行绑定环境、版本、输入输出哈希、QC 和结果路径 | 依具体系统，通常不是统一项目契约 |
+| 失败恢复 | 保留证据 → 诊断 → 定向修复 → 最小验证 → 续跑 | 重点通常在推理/提案迭代 |
+| 科学发布 | 结果、图表、方法、限制和文献反思组成可审计报告 | 重点通常是候选假设、实验设计或综合结论 |
+| 可迁移性 | 后端可声明为本地、GPU、集群、容器、云或 API | 依赖具体平台和工具链 |
+
+因此，本项目定位为“科研智能体的项目执行与证据基础设施”：可与文献、假设生成和领域分析 Agent 组合，而不是替代它们。
 
 ## 项目做什么 / What it does
 
