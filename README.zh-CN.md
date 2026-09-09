@@ -32,13 +32,6 @@ Robin、Google AI Co-Scientist 等系统强调多智能体协作、假设生成�
 - 每个结果都生成方法、数据来源、软件版本、哈希、QC、表、图和人类可读结论。
 - 比较观察结果与预期，并评估是否需要补充证据或改变后续任务。
 
-- The five root documents make project intent, plan, software, data, and status explicit.
-- A mandatory deep-research gate surveys foundational and recent work before plan freeze.
-- The complete model × dataset × stage matrix becomes a dependency/resource/evidence-aware DAG.
-- Execution is dispatched to the backend declared by each project. The bundled driver currently supports local or SSH-remote systemd jobs; local CPU/GPU, containers, schedulers, cloud jobs, and online APIs are supported only when a compatible project driver adapter is configured and verified.
-- Failures follow preserve evidence → diagnose → targeted repair → minimal verification → phase resume.
-- Each result package contains methods, data provenance, software versions, hashes, QC, tables, figures, and readable conclusions.
-- Observations are compared with preregistered expectations, with downstream scientific impact assessed.
 
 ## 架构 / Architecture
 
@@ -105,7 +98,6 @@ archive/                          # 只读历史版本
 
 ## 版本 / Version
 
-当前版本 / Current release: **0.5.1**。安装方法见 [`INSTALL.md`](INSTALL.md)。深度研究门槛见 [`deep_research_gate.md`](skills/scientific-research-project/references/deep_research_gate.md)。
 
 ## 安装与验证
 

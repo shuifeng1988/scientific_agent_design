@@ -57,3 +57,30 @@ python3 "$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py" "$
 Restart Codex after installation. Run `supervisor_agent.py intake|inspect|plan --root PROJECT`; use `supervisor_daemon.py` for continuous execution and `tail -f ~/.codex/monitor/status.md` for monitoring. For Claude Code, link the Skill into `.claude/skills/scientific-research-project`.
 
 Current release: **0.5.1**.
+
+## Architecture
+
+```mermaid
+flowchart TD
+ A[User question] --> B[Intake and discussion]
+ B --> C[Draft 00_PROJECT and 01_PLAN]
+ C --> D[Deep Research Gate]
+ D --> E[User decision]
+ E --> F[Freeze five root documents]
+ F --> G[Dependency/resource DAG]
+ G --> H[Resident Supervisor]
+ H --> I[Local or SSH-remote CPU/GPU]
+ I --> J[QC and evidence validation]
+ J --> K[Interpretation and reflection]
+ K --> G
+```
+
+## Comparison with Robin and Co-Scientist
+
+| Dimension | This framework | Robin / Co-Scientist-style systems |
+|---|---|---|
+| Focus | Project execution, evidence, and audit | Hypothesis generation, synthesis, and collaboration |
+| Freeze gate | Draft → deep research → user decision → freeze | Candidate plans are iterated by agents |
+| State | Five root documents, registry, DAG, durable status | Agent trajectories and candidate outputs |
+| Evidence | Command, environment, version, hash, QC, tables, figures | Depends on the implementation |
+| Recovery | Diagnose before bounded phase-local retry | Primarily reasoning/proposal iteration |
