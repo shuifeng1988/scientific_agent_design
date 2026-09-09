@@ -15,7 +15,7 @@ cp -a "$SOURCE/." "$TARGET/"
 python3 "$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py" "$TARGET"
 ```
 
-安装后请重启 Codex/Claude Code。After installation, restart Codex/Claude Code. Heavy computation belongs on declared H100/V100 servers.
+安装后请重启 Codex/Claude Code。After installation, restart Codex/Claude Code. Execution backend is project-declared; the bundled driver currently supports only local or SSH-remote systemd. Containers, cluster schedulers, cloud jobs, and online APIs require a configured and verified compatible adapter.
 
 ## v0.5.1 常驻模式（当前入口）
 
