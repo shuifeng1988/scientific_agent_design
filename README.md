@@ -12,7 +12,7 @@ This project provides a general-purpose Skill and Supervisor Agent for real scie
 - 用五个根文档明确项目目标、计划、软件、数据和状态。
 - 在冻结新方案前强制进行基础与最新研究的深度文献调研。
 - 将模型×数据×阶段展开为带依赖、资源和证据要求的 DAG。
-- 在 H100/V100 等声明服务器上执行重任务，本机只做轻量编排与聚合。
+- 按项目声明的执行后端运行任务，可为本地 CPU/GPU、远程服务器或集群、容器环境、云端作业或在线 API；不得把特定显卡写成通用要求。
 - 失败时保留证据，诊断原因，定向修复，最小验证后只重跑失败阶段。
 - 每个结果都生成方法、数据来源、软件版本、哈希、QC、表、图和人类可读结论。
 - 比较观察结果与预期，并评估是否需要补充证据或改变后续任务。
@@ -20,7 +20,7 @@ This project provides a general-purpose Skill and Supervisor Agent for real scie
 - The five root documents make project intent, plan, software, data, and status explicit.
 - A mandatory deep-research gate surveys foundational and recent work before plan freeze.
 - The complete model × dataset × stage matrix becomes a dependency/resource/evidence-aware DAG.
-- Heavy computation is dispatched to declared H100/V100 servers; the local host performs only light orchestration and aggregation.
+- Execution is dispatched to the backend declared by each project: local CPU/GPU, remote server or cluster, container/VM, cloud job, or online API. Local execution is allowed when declared and appropriate.
 - Failures follow preserve evidence → diagnose → targeted repair → minimal verification → phase resume.
 - Each result package contains methods, data provenance, software versions, hashes, QC, tables, figures, and readable conclusions.
 - Observations are compared with preregistered expectations, with downstream scientific impact assessed.
@@ -33,7 +33,7 @@ flowchart TD
   B --> C[User discussion and plan freeze]
   C --> D[Dependency and resource DAG]
   D --> E[Resident Supervisor]
-  E --> F[H100/V100 execution]
+  E --> F[Declared backend: local GPU/CPU, remote cluster, container, cloud, or API]
   F --> G[Hash/QC/evidence validation]
   G --> H[Literature-grounded interpretation]
   H --> I{Expected? Scientifically useful?}
