@@ -2,11 +2,13 @@
 
 [Chinese guide](README.zh-CN.md)
 
-This project combines an automated research Skill with a Supervisor Agent. Its core is to **execute the approved steps in `01_PLAN.md` and deliver a corresponding, reviewable research package for every step under `results/`**. Following the plan leads researchers directly to each step's data sources, software and methods, actual commands, results, conclusions, scientific interpretation, figures, tables, and Word report.
+This project is an automated research framework combining a Skill with a Supervisor Agent for real scientific projects. It organizes problem definition, literature research, study design, software and data preparation, execution, quality control, interpretation, and follow-up research into a continuous workflow. Starting from the overall objective, it helps researchers establish clear plans, manage execution progress, and build auditable, reproducible, human-readable research outputs.
 
-The Skill defines what each step must do, preserve, explain, and validate. The Supervisor progresses work according to dependencies, resources, and state. Stable task identifiers connect research goals, execution, and reports so researchers can inspect progress, reproduce findings, and resume work.
+The Skill defines how research work should be performed, guiding the Agent to understand the question, develop the plan, execute its steps, record evidence, and interpret results. The Supervisor coordinates tasks according to the approved plan, dependencies, available resources, and execution state, tracking progress, managing recovery, and advancing subsequent work. Together, they connect project objectives, execution, and research reports.
 
-## 1. Core feature: one planned step, one research package
+## 1. Core advantage: organize work like a researcher and deliver results step by step
+
+The central principle is to **organize research as a researcher would: define the question, develop detailed steps through literature research and discussion, then have the Skill guide the Agent to follow the approved plan step by step and interpret and reflect on the findings**. Execution follows `01_PLAN.md`, with a corresponding, reviewable research package for every step under `results/`. Following the plan leads researchers directly to each step's data sources, software and methods, actual commands, results, conclusions, scientific interpretation, figures, tables, and Word report. When the research direction needs to change, discuss and record the plan amendment before continuing with the revised steps.
 
 `00_PROJECT.md` defines scientific questions; `01_PLAN.md` decomposes them into executable tasks; `registry/tasks.tsv` assigns each task one canonical result path. Multiple runs, models, or seed sub-tasks remain inside that task's directory and feed its consolidated report. General research need not become a model-comparison matrix; comparative studies must include all participants approved in their plan.
 
