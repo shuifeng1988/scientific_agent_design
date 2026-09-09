@@ -10,7 +10,7 @@ Use `scripts/supervisor_daemon.py daemon --root PROJECT --interval 30`. Run it a
 
 - `registry/supervisor.json`: DAG, approved execution contracts, host limits; version-controlled project input.
 - `provenance/supervisor/state.json`: durable attempts, phase, deterministic scheduler IDs, reservations, heartbeat and pending hook outbox.
-- `provenance/supervisor/status.md`: dependency/status table, also rendered into 01_PLAN.md and 04_STATUS.md.
+- `provenance/supervisor/status.md`: dependency/status table, also rendered into 04_STATUS.md. Legacy projects also mirror it in 01_PLAN.md; plan_results_v1 keeps the approved plan immutable and uses registry/task_dependencies.tsv for live dependencies.
 - `provenance/supervisor/events.jsonl`: local event history after successful project-hook delivery.
 - `provenance/supervisor/PAUSE`: pause new submissions; reconcile existing work and preserve reservations.
 
@@ -25,7 +25,7 @@ Each node has `id`, `task_id`, `depends_on` (all-of edges), `result_path`, `scie
   "execution_policy": "v2",
   "paused": false,
   "hosts": {
-    "H100": {
+    "compute_server": {
       "driver": ["python3", "/absolute/source/scripts/systemd_driver.py", "--host", "user@server"],
       "limits": {"max_jobs": 2, "cpus": 16, "memory_gb": 64, "max_gpu_utilization": 10}
     }

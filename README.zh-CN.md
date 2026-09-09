@@ -132,7 +132,23 @@ flowchart TD
 | SSH 服务器 | 驱动可管理用户级 systemd 作业；使用 CPU/GPU 前须按具体环境验证资源和任务命令 |
 | 容器、Slurm、云作业与在线 API 调度 | 无内置专用适配器，不列作当前支持能力 |
 
-通用说明不指定 H100/V100。`bootstrap_supervisor.py` 仍含原项目主机默认值，新项目必须审查并替换。以上为代码检查结果，并非这次文档修改完成了新硬件验收；本次未增加后端或修改调度逻辑。
+通用说明不指定 H100/V100。`bootstrap_supervisor.py` 必须读取用户审查过的 `--hosts` 配置，不再内置个人服务器地址。本次增加的是研究设计与成果包验收，不是新的执行后端或硬件兼容性验证。
+
+### 6.1 工作流要求如何落实与验收
+
+新项目使用 `workflow_policy=plan_results_v1`，执行调度仍使用 `execution_policy=v2`。下表区分程序检查与科研责任，避免把“写了规则”当作“已经做到”。
+
+| README 要求 | 当前落实方式 | 验收范围与边界 |
+|---|---|---|
+| 先理解问题，再建立初步计划 | Skill 要求讨论；draft 工具只建立 00/01 两个草案 | 不把模板当作用户认可的研究目的 |
+| 深度研究后讨论定案 | 冻结前校验两条检索途径、检索证据哈希、方法比较和评价，以及绑定方案与调研的用户决定记录 | 程序不执行检索、不鉴别人类身份，也不判定研究价值；Agent 必须真实检索并取得决定 |
+| 五个根文件与计划一一对应 | 冻结版本、任务清单、唯一结果路径；新派发前检查设计与注册表 | 未批准变更阻断新任务；仍核对已经运行的作业，不重复提交 |
+| 完整执行与持续推进 | 依赖图、资源预留、阶段命令、持久状态和任务独立恢复额度 | 需真实领域命令、环境、凭证与监控服务；本次未新测远程 GPU 或在线 AI |
+| 每步交付可读成果包 | 同一清单生成 Markdown/Word；检查源表内容、内嵌图、运行编号和完整 QC 哈希 | 支持 CSV/TSV 汇总表及 PNG/JPEG 图；分析与制图由领域工作程序完成 |
+| 结果解释与反思 | 检查预期、观察、文献记录、替代解释和下一步决定；科学异常可阻断正式发布 | 校验结构与来源不能保证统计正确、图形表达准确或推理可靠，仍须科学审阅 |
+| 事件触发文档更新 | 持久事件、幂等重放，更新 02/03/04、任务表与结果索引 | 冻结的 00/01 不随进度改写；质控失败生成修订草案，设计变更仍需经审查迁移 |
+
+回归测试包含真正运行的小型本地子进程：两个依赖任务分别执行、校验、解释，重建调度器后继续，生成真实 Markdown、Word、表和图并验收。输入、检索和审批均明确标记为合成测试；资源驱动与监控被隔离替代，因此这不是实际科研、远程 systemd 或在线 Agent 的端到端验收。具体格式和边界见[工作流执行契约](skills/scientific-research-project/references/workflow_contract.md)。
 
 ## 7. 安装与使用
 
@@ -186,7 +202,7 @@ cp "$research_source/adapters/claude/scientific-supervisor.md" .claude/agents/sc
 
 > 使用 scientific-research-project。先讨论研究问题并建立初步项目与计划，深度研究后与我确认。按正式 01_PLAN.md 逐步执行，每项分析在 results 中对应交付数据来源、方法、结果、结论、解释、图表和 Word 报告。
 
-讨论后建立正式文件与任务表。`project_template/` 是文档起点，不能把空模板当作已批准方案；模板也不提供现成的领域分析程序或项目钩子实现。
+新项目先建立两个草案，真实调研并获得用户确认后，才建立五个正式根文件与任务表。`project_template/` 是文档起点，不能把空模板当作已批准方案。冻结工具会安装通用项目事件钩子，但不会自动编写领域分析程序。
 
 项目文件与任务注册表准备好后，运行下列检查与审阅命令；替换路径和任务编号：
 
@@ -221,6 +237,33 @@ tail -f "$HOME/.codex/monitor/status.md"
 
 更新源码后重新复制 Skill，核对副本再按需重启服务。服务使用安装时记录的脚本绝对路径，只更新另一副本不会自动替换它。
 
+### 7.6 启用严格计划与成果包验收
+
+以下是流程中的依次执行命令，不应一次粘贴运行。先按[工作流执行契约](skills/scientific-research-project/references/workflow_contract.md)准备草案 JSON；真实调研与用户确认后，再准备方案、审批、依赖与主机配置。冻结前不能伪造审批文件来跳过讨论。
+
+```bash
+research_scripts="$HOME/git/scientific_agent_design/skills/scientific-research-project/scripts"
+research_project="/absolute/path/to/new-project"
+python3 -m pip install -r "$research_scripts/requirements-report.txt"
+python3 "$research_scripts/research_workflow.py" draft --root "$research_project" --spec "$research_project/provenance/draft.json"
+python3 "$research_scripts/research_workflow.py" freeze --root "$research_project" --proposal "$research_project/provenance/proposal.json" --approval "$research_project/provenance/approval.json"
+python3 "$research_scripts/research_workflow.py" check --root "$research_project"
+python3 "$research_scripts/bootstrap_supervisor.py" --root "$research_project" --dependencies "$research_project/registry/dependencies.tsv" --hosts "$research_project/registry/hosts.json"
+```
+
+`bootstrap_supervisor.py` 只生成依赖配置骨架，不会凭空生成可运行的科研命令。补齐并核对阶段契约后，再使用 7.5 的检查与启动命令。报告环境需要 `python-docx`；本次测试使用 Python 3.13、python-docx 1.2.0，图形测试使用 Pillow 12.0.0。
+
+分析工作程序先生成真实结果表、图及报告清单，再生成最终报告；解释阶段写入真实反思证据并更新完整 QC 后，才运行第二条验收命令。示例结果路径必须替换为任务表登记的路径，`SCI_RUN_ID` 为 Supervisor 为该运行分配的编号。
+
+```bash
+python3 "$research_scripts/research_workflow.py" render --root "$research_project" --task-id Q01.01 --manifest "$research_project/results/Q01_question/Q01.01_analysis/_evidence/report.json"
+python3 "$research_scripts/research_workflow.py" validate-package --root "$research_project" --task-id Q01.01 --run-id "$SCI_RUN_ID"
+```
+
+最终报告清单已生成验收收据时，工具拒绝静默覆盖；批次草案不应冒充最终报告。修订须保留旧运行证据并经审查处理。程序不会自行编造科研结论、文献或用户批准。
+
+旧项目不会自动获得这些新门槛。不要对已有项目直接运行 draft/freeze：工具拒绝覆盖已有注册表和钩子。迁移须保留原计划、编号、结果、运行状态和审批记录，审查后接入；不能删除注册表或重跑已完成研究来绕过检查。
+
 ## 8. 仓库导航
 
 ```text
@@ -241,4 +284,4 @@ archive/                           # 历史资料
 
 ## 9. 版本
 
-当前源码版本：**0.5.1**，见 [`VERSION`](VERSION)。本次为文档和已有 Skill 协议的表述修正，没有新增执行后端。
+当前源码版本：**0.6.0**，见 [`VERSION`](VERSION)。新增研究设计冻结、计划与成果包映射验收、同源 Markdown/Word 生成、可重放文档事件钩子及回归测试；没有新增执行后端。旧项目不会因更新安装副本而自动迁移或重跑。

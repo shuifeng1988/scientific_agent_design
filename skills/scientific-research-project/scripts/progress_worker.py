@@ -26,6 +26,13 @@ def main():
 Read the five canonical documents and the supplied work request. You are a bounded planning/repair
 worker, not the scheduler. Prepare executable phase contracts for the requested existing nodes,
 write/test the necessary small implementation scripts and verify relevant source/input metadata.
+Read each task's actual 01_PLAN.md step and keep its canonical result path. For projects with
+registry/design.json, use research_workflow.py check before planning new computation. Formal
+reports must use a task/run/plan-bound report manifest and render Markdown and Word from the same
+content with research_workflow.py render. QC covers the manifest, report receipt, reflection,
+README, Word, all summary tables and figures. This renderer formats real supplied analysis;
+never invent data, searches, conclusions, user approvals or a scientific review. User approval
+records and design freezing belong to the outer operator, never to this planning worker.
 If a node has worker_failure_record, the PREVIOUS PLANNING WORKER failed. Read that immutable
 record and its raw output/stderr first, diagnose and address its cause before proceeding; reuse
 valid prior work. Do not repeat the same unsuccessful planning operation without a remedy.

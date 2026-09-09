@@ -2,7 +2,7 @@
 """Persistent, dependency-aware dispatcher. Drivers speak JSON, never inferred shell.
 
 Local process only orchestrates. Each driver call must be short and idempotent;
-actual jobs live in a durable scheduler (systemd/Slurm) on the declared host.
+actual jobs live in user-level systemd on the configured local or SSH host.
 """
 from __future__ import annotations
 
@@ -58,6 +58,8 @@ def file_hash(path):
 
 def load_config(root):
     c = json.loads((root / "registry/supervisor.json").read_text())
+    if c.get('workflow_policy') not in (None, 'plan_results_v1'):
+        raise ValueError('unknown workflow_policy')
     nodes = c["nodes"]
     worker_config = c.get("progress_worker", {})
     if worker_config.get("budget_scope", "per_node") not in ("per_node", "legacy_project"):
@@ -156,6 +158,12 @@ def verify_review(root, node, state):
         p = result / name
         if not p.exists() or (p.is_dir() and not any(x.is_file() for x in p.iterdir())):
             raise ValueError("incomplete result package: " + name)
+    strict = (root / 'registry/design.json').exists()
+    if (root / 'registry/supervisor.json').exists():
+        strict = strict or json.loads((root / 'registry/supervisor.json').read_text()).get('workflow_policy') == 'plan_results_v1'
+    if strict and node.get('scientific_result', True):
+        from research_workflow import validate_package
+        validate_package(root, node['task_id'], node['result_path'], state['run_id'])
     return rev
 
 
@@ -562,6 +570,16 @@ class Supervisor:
                 s.update(status="unknown", reason="cannot confirm remote terminal state")
         self.save()
         hooks_ok = self.flush_events() and hooks_ok
+        workflow_hold = None
+        if (self.root / 'registry/design.json').exists() or c.get('workflow_policy') == 'plan_results_v1':
+            from research_workflow import verify_design
+            try:
+                verify_design(self.root)
+                self.state.pop('workflow_hold', None)
+            except Exception as exc:
+                workflow_hold = 'research_workflow_gate_failed: ' + str(exc)
+                self.state['workflow_hold'] = workflow_hold
+        # Reconcile live jobs before a design hold; never lose unknown job leases.
         resources = {}
         for name, host in c["hosts"].items():
             try:
@@ -574,6 +592,9 @@ class Supervisor:
         for n in c["nodes"]:
             s = states[n["id"]]
             if s["status"] not in ("pending", "retry_wait"):
+                continue
+            if workflow_hold:
+                s['reason'] = workflow_hold
                 continue
             contract = n.get("contract")
             if not contract or n.get("approved_contract_sha256") != digest(contract):
@@ -672,7 +693,7 @@ class Supervisor:
             r["free_memory_gb"] -= req["memory_gb"]
         self.state["heartbeat"] = time.time()
         self.state["resources"] = resources
-        if hooks_ok or c.get('execution_policy') == 'v2':
+        if not workflow_hold and (hooks_ok or c.get('execution_policy') == 'v2'):
             self.advance_worker(c)
         c = load_config(self.root)  # worker may have atomically adopted a DAG expansion
         self.state['progression'] = progression(self.state, c)
@@ -768,6 +789,10 @@ class Supervisor:
             lines += ["Progress worker: " + w.get("status", "idle") + "; " + str(w.get("reason", "")), ""]
         atomic(self.directory / "status.md", "\n".join(lines))
         for file, marker in (("01_PLAN.md", "SUPERVISOR_DEPENDENCIES"), ("04_STATUS.md", "SUPERVISOR_STATUS")):
+            if file == '01_PLAN.md' and ((self.root / 'registry/design.json').exists() or c.get('workflow_policy') == 'plan_results_v1'):
+                # Strict plans are approved scientific inputs. Runtime tables live
+                # in registry/task_dependencies.tsv and 04_STATUS, not the hash gate.
+                continue
             path = self.root / file
             start, end = f"<!-- AUTO:{marker}:START -->", f"<!-- AUTO:{marker}:END -->"
             text = path.read_text()
@@ -791,7 +816,11 @@ def main():
     root = a.root.resolve()
     if a.mode == "check":
         c = load_config(root)
-        print(json.dumps({"nodes": len(c["nodes"]), "contracts": sum(bool(n.get('contract')) for n in c['nodes']), "dag": "acyclic"}))
+        result = {"nodes": len(c["nodes"]), "contracts": sum(bool(n.get('contract')) for n in c['nodes']), "dag": "acyclic"}
+        if (root / 'registry/design.json').exists() or c.get('workflow_policy') == 'plan_results_v1':
+            from research_workflow import verify_design
+            result['workflow'] = verify_design(root)
+        print(json.dumps(result))
         return
     if a.mode == "status":
         p = root / "provenance/supervisor/state.json"

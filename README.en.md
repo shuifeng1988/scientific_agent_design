@@ -132,7 +132,23 @@ The bundled driver runs **Linux local or SSH-remote user-level systemd jobs**. H
 | SSH servers | The driver can manage user-level systemd jobs; CPU/GPU resources and task commands require environment-specific verification |
 | Containers, Slurm, cloud jobs, and online API scheduling | No bundled dedicated adapters; not listed as current capabilities |
 
-The general documentation does not prescribe H100/V100. `bootstrap_supervisor.py` still contains original-project host defaults that new projects must review and replace. These statements come from code inspection, not new hardware acceptance tests during this documentation change. No backend or scheduler logic was added.
+The general documentation does not prescribe H100/V100. `bootstrap_supervisor.py` now requires a reviewed `--hosts` configuration rather than personal server defaults. This release adds design and result-package acceptance, not a new execution backend or hardware compatibility validation.
+
+### 6.1 How workflow requirements are implemented and tested
+
+New projects use `workflow_policy=plan_results_v1`, alongside `execution_policy=v2` for scheduling. This table separates programmatic checks from scientific responsibilities so that an instruction is not mistaken for verified execution.
+
+| README requirement | Current implementation | Acceptance scope and boundary |
+|---|---|---|
+| Understand the question before drafting | The Skill requires discussion; the draft tool creates only 00/01 | A template is not treated as user approval of the research objective |
+| Discuss and agree after deep research | Before freezing, validate two search routes, hashed search evidence, method comparisons/appraisal, and user-decision records bound to the proposal and appraisal | The program neither searches nor authenticates human identity or assesses research value; the Agent must perform real searches and obtain the decision |
+| Map the five documents to the plan | Freeze the version, task manifest, and canonical paths; check design/registry before new dispatch | Unapproved changes hold new work; existing jobs are still reconciled without duplicate submission |
+| Execute completely and advance continuously | DAG, resource reservations, phase commands, durable state, and task-local recovery budgets | Requires real domain commands, environments, credentials, and monitoring; no new remote GPU or online AI validation was performed here |
+| Deliver a readable package per step | Generate Markdown/Word from one manifest; compare source-table contents, embedded figures, run identity, and complete QC hashes | Supports CSV/TSV summary tables and PNG/JPEG figures; domain workers perform analysis and plotting |
+| Interpret and reflect | Check expectations, observations, literature records, alternatives, and next-step decisions; scientific anomalies can hold formal publication | Structural/provenance checks do not establish statistical correctness, faithful graphical encoding, or sound reasoning; scientific review remains necessary |
+| Update documents through events | Durable events and idempotent replay update 02/03/04, the task registry, and the result index | Progress does not rewrite frozen 00/01; QC failure creates an amendment draft, while design changes still require reviewed migration |
+
+Regression tests include real small local subprocesses: two dependent tasks run, validate, and interpret; the scheduler is reconstructed between steps; actual Markdown, Word, tables, and figures are generated and checked. Inputs, searches, and approvals are explicitly synthetic fixtures. Resource-driver and monitoring interfaces are isolated substitutes, so this is not an end-to-end acceptance of real research, remote systemd, or an online Agent. See the [workflow execution contract](skills/scientific-research-project/references/workflow_contract.md) for schemas and boundaries.
 
 ## 7. Installation and use
 
@@ -186,7 +202,7 @@ Give the Agent a concrete request, for example:
 
 > Use scientific-research-project. Discuss my question and draft the project and plan, then conduct deep research and confirm the design with me. Execute the formal 01_PLAN.md step by step, delivering corresponding data sources, methods, results, conclusions, interpretation, tables, figures, and Word reports under results.
 
-Establish formal documents and the task registry after discussion. `project_template/` is a starting point, not an approved protocol; it also does not supply ready-made domain analyses or an implemented project event hook.
+For a new project, first create two drafts; establish the five formal documents and task registry only after actual research and user confirmation. `project_template/` is a document starting point, not an approved protocol. The freeze tool installs a portable project event hook but does not write domain analysis programs.
 
 Once project files and the task registry are ready, use these inspection/review commands, replacing the path and task ID:
 
@@ -221,6 +237,33 @@ Project progress appears in `04_STATUS.md` and `provenance/supervisor/status.md`
 
 After updating source, copy the Skill again, verify the installed files, and restart services as appropriate. Services use script absolute paths recorded during installation; updating a different copy does not replace those scripts.
 
+### 7.6 Enable strict plan and result-package acceptance
+
+These commands represent successive workflow stages, not a block to paste and run at once. Prepare the draft JSON using the [workflow execution contract](skills/scientific-research-project/references/workflow_contract.md); prepare proposal, approval, dependency, and host records only after actual research and user confirmation. Never fabricate an approval file to bypass discussion.
+
+```bash
+research_scripts="$HOME/git/scientific_agent_design/skills/scientific-research-project/scripts"
+research_project="/absolute/path/to/new-project"
+python3 -m pip install -r "$research_scripts/requirements-report.txt"
+python3 "$research_scripts/research_workflow.py" draft --root "$research_project" --spec "$research_project/provenance/draft.json"
+python3 "$research_scripts/research_workflow.py" freeze --root "$research_project" --proposal "$research_project/provenance/proposal.json" --approval "$research_project/provenance/approval.json"
+python3 "$research_scripts/research_workflow.py" check --root "$research_project"
+python3 "$research_scripts/bootstrap_supervisor.py" --root "$research_project" --dependencies "$research_project/registry/dependencies.tsv" --hosts "$research_project/registry/hosts.json"
+```
+
+`bootstrap_supervisor.py` creates only a dependency configuration skeleton; it does not invent runnable research commands. Complete and review the phase contracts before using the checks and startup commands in 7.5. The reporting environment requires `python-docx`; this acceptance used Python 3.13, python-docx 1.2.0, and Pillow 12.0.0 for figure fixtures.
+
+The analysis worker first produces actual tables, figures, and the report manifest, then renders the final reports. Run the second validation command only after the interpretation phase records genuine reflection evidence and refreshes complete QC. Replace the example path with the registered task path; `SCI_RUN_ID` is the Supervisor-assigned run identifier.
+
+```bash
+python3 "$research_scripts/research_workflow.py" render --root "$research_project" --task-id Q01.01 --manifest "$research_project/results/Q01_question/Q01.01_analysis/_evidence/report.json"
+python3 "$research_scripts/research_workflow.py" validate-package --root "$research_project" --task-id Q01.01 --run-id "$SCI_RUN_ID"
+```
+
+Once a final report receipt exists, the tool refuses silent overwrite; batch drafts must not masquerade as final reports. Revisions require preserving previous run evidence and reviewed handling. The program does not invent conclusions, literature, or user approvals.
+
+Existing projects do not automatically gain these new gates. Do not run draft/freeze directly on an existing project: the tool refuses to overwrite its registry and hook. Migration must preserve the original plan, IDs, results, running-job state, and approval records and be reviewed before adoption. Do not delete registries or rerun completed research to bypass checks.
+
 ## 8. Repository navigation
 
 ```text
@@ -241,4 +284,4 @@ Existing dated DOCX/PDF documents and figures may reflect earlier designs. Use t
 
 ## 9. Version
 
-Current source version: **0.5.1**, recorded in [`VERSION`](VERSION). This update corrects documentation and existing Skill instructions; it adds no execution backend.
+Current source version: **0.6.0**, recorded in [`VERSION`](VERSION). This release adds design freezing, plan-to-package acceptance, same-source Markdown/Word generation, replayable document event hooks, and regression tests. It adds no execution backend. Updating the installed copy does not automatically migrate or rerun existing projects.

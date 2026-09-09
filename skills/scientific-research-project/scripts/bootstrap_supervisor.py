@@ -13,6 +13,7 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument('--root',type=Path,required=True)
     ap.add_argument('--dependencies',type=Path,required=True)
+    ap.add_argument('--hosts',type=Path,required=True,help='Reviewed JSON host/driver/resource configuration')
     ap.add_argument('--progress-worker',action='store_true')
     a=ap.parse_args(); root=a.root.resolve()
     target=root/'registry/supervisor.json'
@@ -32,15 +33,13 @@ def main():
         nodes.append(n)
     if set(tasks)!=set(n['id'] for n in nodes): raise ValueError('dependency table must cover all registered tasks')
     scripts=Path(__file__).resolve().parent
-    host={}
-    for name,remote in [('local',None),('H100','shuifeng@192.168.237.26'),('V100','shuifeng@192.168.236.161')]:
-        cmd=[sys.executable,str(scripts/'systemd_driver.py')]
-        if remote: cmd += ['--host',remote]
-        host[name]=dict(driver=cmd,limits=dict(max_jobs=1 if name=='local' else 2,
-                           cpus=2 if name=='local' else 16,memory_gb=4 if name=='local' else 64,
-                           max_gpu_utilization=10))
-    c=dict(paused=False,hosts=host,nodes=nodes,progress_worker=dict(enabled=a.progress_worker,
-        argv=[sys.executable,str(scripts/'progress_worker.py')],batch_size=1,max_calls_per_day=12,
+    host=json.loads(a.hosts.read_text())
+    if not isinstance(host,dict) or not host: raise ValueError('reviewed hosts required')
+    if a.progress_worker and 'local' not in host: raise ValueError('progress worker requires local host')
+    from research_workflow import verify_design
+    verify_design(root)
+    c=dict(execution_policy='v2',workflow_policy='plan_results_v1',paused=False,hosts=host,nodes=nodes,progress_worker=dict(enabled=a.progress_worker,
+        argv=[sys.executable,str(scripts/'progress_worker.py')],batch_size=1,budget_scope='per_node',max_worker_calls_per_round=3,
         cooldown_seconds=600,failure_backoff_seconds=1800,timeout_seconds=1800))
     atomic(target,c)
     print(json.dumps(dict(config=str(target),nodes=len(nodes),imported=sum('imported_evidence' in n for n in nodes))))

@@ -1,5 +1,7 @@
 # Project schema
 
+For new projects, [workflow_contract.md](workflow_contract.md) specifies the implemented plan_results_v1 gate, JSON records, same-source report generation and event-hook installation. The narrative requirements below remain scientific review criteria; a schema pass does not prove that the analysis or literature interpretation is correct.
+
 ## Canonical root
 
 Every project instance exposes five human entry points:

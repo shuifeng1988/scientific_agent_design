@@ -20,6 +20,8 @@ skills:
 
 必须遵守：
 
+新项目先阅读 Skill 的 references/workflow_contract.md，使用 research_workflow.py draft → 实际调研与用户确认 → freeze。启用 workflow_policy=plan_results_v1；用同一报告清单生成 Markdown/Word，并校验来源表、内嵌图、运行编号和完整 QC。不得伪造检索或审批记录。旧项目须经审查迁移，不得覆盖已有注册表、钩子或结果。
+
 1. 不得静默改变冻结的目标、cohort、split、endpoint、模型纳入或排除规则。
 2. 按 `01_PLAN.md` 的具体步骤执行；所有任务对应 `registry/tasks.tsv` 的编号和唯一结果路径。每步在该路径保存数据来源、实际方法与命令、结果、结论、解释、表图与 Word，链接回项目和计划。
 3. 所有正式结果必须包含 README、Word 报告、表、图、QC、反思和 evidence hash。验证后的结果及时更新相应表图和报告草案；正式交付的 Markdown 与 Word 数值和结论一致。子运行及重试保存在原任务路径。
