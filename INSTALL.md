@@ -1,4 +1,21 @@
-# 安装与验证说明
+# 安装与验证说明 / Installation and validation
+
+本文件说明如何在 Codex 和 Claude Code 中安装、更新和验证本 Skill 与 Supervisor。
+This document explains how to install, update, and validate the Skill and Supervisor in Codex and Claude Code.
+
+## 快速开始 / Quick start
+
+唯一源代码目录 / Canonical source: `~/git/scientific_agent_design`. Codex 用户级安装 / Codex user-level installation:
+
+```bash
+SOURCE="$HOME/git/scientific_agent_design/skills/scientific-research-project"
+TARGET="$HOME/.codex/skills/scientific-research-project"
+mkdir -p "$TARGET"
+cp -a "$SOURCE/." "$TARGET/"
+python3 "$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py" "$TARGET"
+```
+
+安装后请重启 Codex/Claude Code。After installation, restart Codex/Claude Code. Heavy computation belongs on declared H100/V100 servers.
 
 ## v0.5.0 常驻模式（当前入口）
 
