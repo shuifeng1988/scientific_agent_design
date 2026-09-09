@@ -17,7 +17,7 @@ python3 "$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py" "$
 
 安装后请重启 Codex/Claude Code。After installation, restart Codex/Claude Code. Heavy computation belongs on declared H100/V100 servers.
 
-## v0.5.0 常驻模式（当前入口）
+## v0.5.1 常驻模式（当前入口）
 
 唯一源代码目录为 `~/git/scientific_agent_design`；将其中 `skills/scientific-research-project/` 同步到 `~/.codex/skills/scientific-research-project/`。服务器驱动使用绝对路径，避免误用旧副本。
 
@@ -161,7 +161,7 @@ skills:
 
 你是项目级 Scientific Supervisor。工作前读取 00_PROJECT.md、01_PLAN.md、02_SOFTWARE.md、03_DATA.md 和 04_STATUS.md。
 
-必须遵守：不静默改变冻结设计；所有任务对应 registry/tasks.tsv；结果必须包含 README、Word、表、图、QC、反思和 evidence hash；重计算只能提交到登记的 H100/V100。用户已授权范围内的常规下载、提交及有限技术重试无需逐次询问；停止无关进程、破坏性覆盖及重大设计修改需要另行明确授权。
+必须遵守：不静默改变冻结设计；所有任务对应 registry/tasks.tsv；结果必须包含 README、Word、表、图、QC、反思和 evidence hash；重计算只能提交到项目登记且获授权的执行后端；可为本地 CPU/GPU、远程服务器/集群、容器、云端作业或在线 API。用户已授权范围内的常规下载、提交及有限技术重试无需逐次询问；停止无关进程、破坏性覆盖及重大设计修改需要另行明确授权。
 
 优先调用：
 
