@@ -24,6 +24,12 @@ Do not create a second stage/final/new-results numbering system.
 
 A completed task directory contains README.md, REPORT.docx, tables/, figures/, and _evidence/. Its README must state the question, plan version, data source/version/hash/call, software/version/environment/usage, actual command/host/resources/seed/run ID, QC/coverage/failures/exclusions, result tables/figures, conclusions, anomalies, limitations, and next action.
 
+The central mapping is 00_PROJECT scientific question → 01_PLAN executable step → registry/tasks.tsv task_id/result_path → one canonical results package. Run IDs, model/seed children and retries stay inside that task path and feed its task-level report. Do not create a separate, unlinked results tree.
+
+At each step, read the approved inputs/methods/commands and write their actual provenance with the outputs. As validated results arrive, update corresponding tables, figures and report drafts. At formal completion, README.md and REPORT.docx must agree on values, denominators, figures, conclusions and limitations. Cite raw-data paths/hashes rather than duplicating large data. Figures must trace to source tables and generation methods; literature interpretation must preserve support, conflict, alternatives and downstream implications.
+
+Intermediate artifact nodes may release computation after their own hashed QC without a standalone Word report; they do not finalize the parent scientific analysis. The parent remains incomplete until its formal report package and event acceptance are finished. File presence alone is not a scientific validity check.
+
 ## Event contract
 
 Use the project's registered event hook (this benchmark: scripts/hooks/project_event.py) to record immutable events in provenance/events.jsonl; discover its actual path rather than assuming a template location. Required event families are data.download.completed, data.standardization.completed, software.download.completed, software.smoke.passed, run.started, run.progress, run.completed, run.failed, qc.passed, qc.failed, and plan.amendment.approved.
