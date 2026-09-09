@@ -29,9 +29,12 @@ This project provides a general-purpose Skill and Supervisor Agent for real scie
 
 ```mermaid
 flowchart TD
-  A[00_PROJECT / 01_PLAN] --> B[Intake + Deep Research Gate]
-  B --> C[User discussion and plan freeze]
-  C --> D[Dependency and resource DAG]
+  A[User proposes research question] --> B[Supervisor intake + discussion]
+  B --> C[Draft 00_PROJECT / 01_PLAN]
+  C --> D[Deep Research Gate]
+  D --> E[User discussion and plan freeze]
+  E --> F[Generate final 00_PROJECT / 01_PLAN / 02_SOFTWARE / 03_DATA / 04_STATUS]
+  F --> G[Dependency and resource DAG]
   D --> E[Resident Supervisor]
   E --> F[Declared backend: local GPU/CPU, remote cluster, container, cloud, or API]
   F --> G[Hash/QC/evidence validation]
@@ -48,6 +51,19 @@ flowchart TD
 3. Resident Supervisor Daemon：持续监控、资源感知调度、依赖释放和有限重试。
 4. Project template：提供 `00_PROJECT.md`–`04_STATUS.md`、registry、provenance、results 结构。
 
+## 核心 Skill 工作流 / Core Skill workflow
+
+1. **Intake / 需求理解**：识别研究目的、科学决策、假设、对象、数据、模型、终点、约束和预期；记录高影响待决问题。
+2. **Draft / 初步方案**：与用户讨论后，仅生成初步 `00_PROJECT.md` 和 `01_PLAN.md`，明确问题边界与候选分析。
+3. **Deep research gate / 深度研究门槛**：检索基础及最新文献，建立证据图谱，比较常规、当前和前沿方法，评估意义、创新性、可行性、资源和信息增益。
+4. **User decision / 用户决策**：向用户呈现研究价值、方法选项、风险和 go/no-go 或分阶段建议；记录确认、异议和修改。
+5. **Freeze / 正式冻结**：确认后才生成最终五个根文件、registry、数据/软件版本、split、统计、排除和资源契约。
+6. **Execute / 执行**：将完整 eligible 模型×数据×阶段展开为 DAG，在项目声明的本地、远程、容器、云端或 API 后端运行。
+7. **Recover / 故障恢复**：保留日志和哈希，诊断原因，定向修复，最小验证，只恢复失败阶段，并限制任务级重试额度。
+8. **QC and release / 质控发布**：核对输入输出哈希、行数、环境、失败表、表图和报告；artifact readiness 与 scientific release 分离。
+9. **Interpret and reflect / 解读反思**：比较预期与观察，检索支持和冲突证据，解释异常和限制，判断后续任务价值，必要时提出补充证据或用户讨论。
+10. **Continue / 持续推进**：依赖和资源满足即调度下一节点；所有状态、事件和结果路径持久化，支持中断后恢复。
+
 ## 主要优点 / Key advantages
 
 - **可审计 / Auditable**：每次下载、运行、失败、修复和结论都有事件与哈希证据。
@@ -61,8 +77,6 @@ flowchart TD
 
 ```text
 README.md                         # 中英双语总览 / bilingual overview
-README.zh-CN.md                   # 中文详细说明
-README.en.md                      # English detailed guide
 INSTALL.md                        # Codex / Claude 安装与验证
 skills/scientific-research-project/
   SKILL.md                        # Skill 入口
