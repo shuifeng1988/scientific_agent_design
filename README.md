@@ -27,7 +27,7 @@ Robin、Google AI Co-Scientist 等系统强调多智能体协作、假设生成�
 - 用五个根文档明确项目目标、计划、软件、数据和状态。
 - 在冻结新方案前强制进行基础与最新研究的深度文献调研。
 - 将模型×数据×阶段展开为带依赖、资源和证据要求的 DAG。
-- 按项目声明的执行后端运行任务，可为本地 CPU/GPU、远程服务器或集群、容器环境、云端作业或在线 API；不得把特定显卡写成通用要求。
+- 按项目声明的执行后端运行任务，可按项目声明使用本地 CPU/GPU、远程服务器或集群、容器、云端作业或在线 API；当前内置驱动实际支持本地或 SSH 远程 systemd，其他后端需实现兼容 driver adapter。
 - 失败时保留证据，诊断原因，定向修复，最小验证后只重跑失败阶段。
 - 每个结果都生成方法、数据来源、软件版本、哈希、QC、表、图和人类可读结论。
 - 比较观察结果与预期，并评估是否需要补充证据或改变后续任务。
@@ -35,7 +35,7 @@ Robin、Google AI Co-Scientist 等系统强调多智能体协作、假设生成�
 - The five root documents make project intent, plan, software, data, and status explicit.
 - A mandatory deep-research gate surveys foundational and recent work before plan freeze.
 - The complete model × dataset × stage matrix becomes a dependency/resource/evidence-aware DAG.
-- Execution is dispatched to the backend declared by each project: local CPU/GPU, remote server or cluster, container/VM, cloud job, or online API. Local execution is allowed when declared and appropriate.
+- Execution is dispatched to the backend declared by each project. The bundled driver currently supports local or SSH-remote systemd jobs; local CPU/GPU, containers, schedulers, cloud jobs, and online APIs are supported only when a compatible project driver adapter is configured and verified.
 - Failures follow preserve evidence → diagnose → targeted repair → minimal verification → phase resume.
 - Each result package contains methods, data provenance, software versions, hashes, QC, tables, figures, and readable conclusions.
 - Observations are compared with preregistered expectations, with downstream scientific impact assessed.
