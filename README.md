@@ -33,15 +33,15 @@ flowchart TD
   B --> C[Draft 00_PROJECT / 01_PLAN]
   C --> D[Deep Research Gate]
   D --> E[User discussion and plan freeze]
-  E --> F[Generate final 00_PROJECT / 01_PLAN / 02_SOFTWARE / 03_DATA / 04_STATUS]
+  E --> F[Generate final five root documents]
   F --> G[Dependency and resource DAG]
-  D --> E[Resident Supervisor]
-  E --> F[Declared backend: local GPU/CPU, remote cluster, container, cloud, or API]
-  F --> G[Hash/QC/evidence validation]
-  G --> H[Literature-grounded interpretation]
-  H --> I{Expected? Scientifically useful?}
-  I -->|yes / add evidence| D
-  I -->|strong anomaly| J[Hold affected branch + user discussion]
+  G --> H[Resident Supervisor]
+  H --> I[Declared backend: local CPU/GPU, remote cluster, container, cloud, or API]
+  I --> J[Hash/QC/evidence validation]
+  J --> K[Literature-grounded interpretation]
+  K --> L{Expected? Scientifically useful?}
+  L -->|yes / add evidence| G
+  L -->|strong anomaly| M[Hold affected branch + user discussion]
 ```
 
 核心组件 / Components:
