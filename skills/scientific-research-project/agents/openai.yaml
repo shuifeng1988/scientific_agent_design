@@ -1,0 +1,4 @@
+interface:
+  display_name: "Auditable Scientific Project"
+  short_description: "Continuously schedule, recover, and interpret scientific tasks"
+  default_prompt: "Use $scientific-research-project to advance authorized tasks, diagnose every failure before targeted repair and tested phase-only retry, and interpret results with auditable evidence."

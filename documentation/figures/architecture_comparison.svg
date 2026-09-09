@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="780" viewBox="0 0 1400 780">
+  <rect width="1400" height="780" fill="#ffffff"/>
+  <text x="700" y="46" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#172554">科研智能体架构对照与混合落点</text>
+  <text x="700" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" fill="#475569">本项目 Supervisor 作为治理脊柱，吸收 Co-Scientist 的假设竞争和 Robin 的实验反馈能力</text>
+
+  <rect x="60" y="125" width="390" height="355" rx="18" fill="#eef2ff" stroke="#4f46e5" stroke-width="3"/>
+  <rect x="505" y="125" width="390" height="355" rx="18" fill="#fff7ed" stroke="#ea580c" stroke-width="3"/>
+  <rect x="950" y="125" width="390" height="355" rx="18" fill="#ecfdf5" stroke="#059669" stroke-width="3"/>
+  <text x="255" y="168" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#3730a3">本项目 Skill + Supervisor</text>
+  <text x="700" y="168" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#9a3412">Co-Scientist</text>
+  <text x="1145" y="168" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#047857">Robin</text>
+
+  <g font-family="Arial, sans-serif" font-size="18" fill="#1e293b">
+    <text x="90" y="215">• 项目目标、计划与版本冻结</text><text x="90" y="250">• 数据/软件/主机/命令/hash 审计</text><text x="90" y="285">• Q/task/result 唯一映射</text><text x="90" y="320">• QC、失败/排除分母与反思</text><text x="90" y="355">• 受授权的远程执行门禁</text><text x="90" y="420" font-weight="700" fill="#3730a3">强项：可重启、可复核、可审计</text>
+    <text x="535" y="215">• Generation / Reflection</text><text x="535" y="250">• Ranking / Evolution</text><text x="535" y="285">• Proximity / Meta-review</text><text x="535" y="320">• 异步 worker 与 tournament</text><text x="535" y="355">• test-time compute 扩展</text><text x="535" y="420" font-weight="700" fill="#9a3412">强项：假设生成、竞争与演化</text>
+    <text x="980" y="215">• Crow / Falcon 文献检索</text><text x="980" y="250">• Finch 实验数据分析</text><text x="980" y="285">• 多轨迹分析与共识整合</text><text x="980" y="320">• 实验结果驱动下一轮候选</text><text x="980" y="355">• 文献—实验—数据反馈</text><text x="980" y="420" font-weight="700" fill="#047857">强项：实验室闭环与领域工作流</text>
+  </g>
+
+  <rect x="175" y="560" width="1050" height="125" rx="18" fill="#f8fafc" stroke="#334155" stroke-width="3"/>
+  <text x="700" y="602" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#0f172a">推荐混合架构</text>
+  <text x="700" y="640" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" fill="#334155">Supervisor 治理层 → Co-Scientist 假设层 + Robin 证据层 + Benchmark 执行层</text>
+  <text x="700" y="670" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#334155">所有 worker 必须回写统一 registry、event、result package 和 reflection</text>
+  <path d="M450 300 L505 300" stroke="#64748b" stroke-width="4" marker-end="url(#arrow)"/><path d="M895 300 L950 300" stroke="#64748b" stroke-width="4" marker-end="url(#arrow)"/>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#64748b"/></marker></defs>
+</svg>

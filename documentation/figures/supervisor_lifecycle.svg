@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <path d="M0,0 L10,3 L0,6 Z" fill="#2563eb"/>
+    </marker>
+    <style>
+      .title{font:700 28px Arial,sans-serif;fill:#0f172a}
+      .label{font:700 17px Arial,sans-serif;fill:#0f172a}
+      .small{font:13px Arial,sans-serif;fill:#334155}
+      .step{fill:#dbeafe;stroke:#2563eb;stroke-width:2;rx:14}
+      .decision{fill:#fef9c3;stroke:#ca8a04;stroke-width:2}
+      .success{fill:#dcfce7;stroke:#16a34a;stroke-width:2;rx:14}
+      .warning{fill:#fee2e2;stroke:#dc2626;stroke-width:2;rx:14}
+      .arrow{stroke:#2563eb;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1200" height="650" fill="#ffffff"/>
+  <text x="600" y="42" text-anchor="middle" class="title">Supervisor decision lifecycle</text>
+
+  <rect x="45" y="110" width="170" height="90" class="step"/>
+  <text x="130" y="148" text-anchor="middle" class="label">1. Intake</text>
+  <text x="130" y="174" text-anchor="middle" class="small">clarify purpose</text>
+  <rect x="270" y="110" width="170" height="90" class="step"/>
+  <text x="355" y="148" text-anchor="middle" class="label">2. Plan</text>
+  <text x="355" y="174" text-anchor="middle" class="small">freeze contract</text>
+  <rect x="495" y="110" width="170" height="90" class="step"/>
+  <text x="580" y="148" text-anchor="middle" class="label">3. Execute</text>
+  <text x="580" y="174" text-anchor="middle" class="small">remote H100/V100</text>
+  <rect x="720" y="110" width="170" height="90" class="step"/>
+  <text x="805" y="148" text-anchor="middle" class="label">4. QC</text>
+  <text x="805" y="174" text-anchor="middle" class="small">verify outputs</text>
+  <rect x="945" y="110" width="190" height="90" class="decision"/>
+  <text x="1040" y="148" text-anchor="middle" class="label">5. Reflect</text>
+  <text x="1040" y="174" text-anchor="middle" class="small">expected vs observed?</text>
+
+  <path d="M215 155 H270" class="arrow"/>
+  <path d="M440 155 H495" class="arrow"/>
+  <path d="M665 155 H720" class="arrow"/>
+  <path d="M890 155 H945" class="arrow"/>
+
+  <rect x="160" y="380" width="230" height="110" class="success"/>
+  <text x="275" y="420" text-anchor="middle" class="label">Freeze scoped result</text>
+  <text x="275" y="448" text-anchor="middle" class="small">report evidence strength</text>
+  <text x="275" y="470" text-anchor="middle" class="small">do not overclaim</text>
+  <rect x="485" y="380" width="230" height="110" class="warning"/>
+  <text x="600" y="420" text-anchor="middle" class="label">Discuss with user</text>
+  <text x="600" y="448" text-anchor="middle" class="small">strong unexpected result</text>
+  <text x="600" y="470" text-anchor="middle" class="small">scope or claim may change</text>
+  <rect x="810" y="380" width="230" height="110" class="success"/>
+  <text x="925" y="420" text-anchor="middle" class="label">Add evidence task</text>
+  <text x="925" y="448" text-anchor="middle" class="small">cheap, low-risk, linked</text>
+  <text x="925" y="470" text-anchor="middle" class="small">primary contract unchanged</text>
+
+  <path d="M1040 200 V300 H275 V380" class="arrow"/>
+  <path d="M1040 200 V300 H600 V380" class="arrow"/>
+  <path d="M1040 200 V300 H925 V380" class="arrow"/>
+  <path d="M600 380 V325 H355 V200" class="arrow"/>
+  <text x="470" y="316" class="small">approved amendment only</text>
+  <text x="650" y="292" class="small">user discussion</text>
+  <text x="880" y="292" class="small">supplementary</text>
+</svg>
