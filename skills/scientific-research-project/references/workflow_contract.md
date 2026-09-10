@@ -4,7 +4,7 @@ Read this before using `workflow_policy=plan_results_v1`. This contract implemen
 
 ## 1. Intake, appraisal and approval
 
-1. Discuss the user's purpose, hypotheses, success criteria, scope and constraints.
+1. Follow intake_protocol.md: first ask 1–3 high-impact questions and wait, discuss answers and alternatives, and obtain confirmation of the direction summary before drafting. Preserve real decisions; do not require the opening prompt to specify the whole study. The draft tool itself does not verify that this dialogue occurred, and document keywords never establish consent.
 2. Prepare a UTF-8 JSON file with nonempty `project` and `plan` Markdown strings. Run `research_workflow.py draft --root PROJECT --spec FILE`. Only 00_PROJECT.md and 01_PLAN.md are established, with an intake receipt. Existing root documents are never overwritten.
 3. Conduct actual searches and appraise the question. Preserve readable appraisal/method options and actual search-output evidence in project provenance.
 4. Prepare the proposed five formal documents and complete task list; show the user the actual content, important choices, uncertainties and costs.
@@ -14,6 +14,8 @@ Read this before using `workflow_policy=plan_results_v1`. This contract implemen
 All receipt objects have `{"path": "project-relative/file", "sha256": "actual SHA-256"}`. Receipt paths resolve inside the project; traversal and external symlinks are rejected. Large remote data need not be duplicated: reference a locally hashed provenance manifest containing the actual remote location, source/version, transfer/access command, and verified remote checksum. This validates the manifest, not remote bytes; the data worker must perform and record remote verification.
 
 ### Appraisal JSON
+
+New records declare `status`: `preliminary`/`incomplete` until substantive synthesis and the review in research_depth.md are finished; then `ready_for_design_review`. This is not human approval. For new freezing, an explicitly present status must be `ready_for_design_review` or legacy `complete`; other values are rejected. Missing status remains accepted for older schema compatibility but is not permission for new workers to evade the review. Existing frozen baselines are not retroactively invalidated. Link the actual final synthesis and updated search evidence, not an older preliminary assessment with unintegrated later searches.
 
 Required nonempty strings: `question`, `searched_at`, `significance`, `novelty`, `feasibility`, `worth_doing`, `information_gain`, `limitations`, `recommendation`.
 

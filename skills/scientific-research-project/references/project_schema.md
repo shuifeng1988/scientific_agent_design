@@ -14,6 +14,8 @@ Every project instance exposes five human entry points:
 
 ## Identifiers
 
+00/01 must satisfy [research_depth.md](research_depth.md). A goal paragraph and Q/task inventory are navigation, not an adequate scientific design. Keep the sourced significance/gap argument in 00 and detailed purpose–input–method–output–evidence cards for every task and substep in 01. The source project_template documents are drafting aids; unresolved placeholders cannot be treated as a ready protocol.
+
 - Q00, Q01: scientific question.
 - Q01.01: executable task under a question.
 - Q01.01.R001: one execution/run.

@@ -177,7 +177,13 @@ def freeze(root, proposal_path, approval_path):
     for name, value in p["documents"].items():
         text(value, name)
     validate_tasks(root, p["tasks"], p["documents"][ROOT_DOCS[0]], p["documents"][ROOT_DOCS[1]])
-    validate_appraisal(root, p["appraisal"])
+    appraisal = validate_appraisal(root, p["appraisal"])
+    # New freezes must not promote an explicitly preliminary/incomplete appraisal.
+    # Missing status remains a legacy schema case; absence is not proof of depth.
+    # verify_design deliberately preserves already-frozen historical baselines.
+    if "status" in appraisal:
+        require(appraisal["status"] in ("ready_for_design_review", "complete"),
+                "appraisal is not ready for design freeze: " + str(appraisal["status"]))
     require(approval.get("decision") == "approved", "explicit user approval required")
     require(approval.get("proposal_sha256") == sha(proposal_path), "approval does not cover proposal")
     require(approval.get("appraisal_sha256") == p["appraisal"]["sha256"], "approval does not cover appraisal")

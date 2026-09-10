@@ -4,6 +4,8 @@ The Supervisor is a guarded control loop, not an unrestricted shell agent.
 
 ## Loop
 
+Entry condition: for a new/unclear study, perform [conversational intake](intake_protocol.md) first. Ask 1–3 questions and return control to the user, rather than running this loop in the same turn. Continue only after direction confirmation, appraisal, and final design approval as applicable. In a noninteractive worker, expose needs_user to the outer conversation. Existing approved tasks do not repeat intake, and a scoped hold must not stop unrelated authorized branches.
+
 1. Inspect the five root files and registry/tasks.tsv.
 2. Select the next task only if its dependencies are satisfied and its data/software gates are ready.
 3. Produce an execution contract containing question, task ID, eligible models, data IDs, software/environment, host, command, resources, seed, endpoints, QC, failure strategy, and result path.
@@ -23,6 +25,8 @@ anomalies must not trigger blind retries or changed scientific conclusions.
 Artifact nodes end at verified run → validate and release computation; report/scientific nodes also require interpretation and publication QC. Never force literature search on a purely technical artifact prerequisite. See [execution-first architecture](execution_first_architecture.md).
 
 ## Selection rules
+
+Before final-plan approval, read research_depth.md and conduct its substantive review against the actual 00/01, appraisal and source evidence. Return specific section/task defects, not a blanket approval based on files being present. During execution, the requested node must have an identifiable purpose, inputs, method, output schema and evidence use in its approved parent task. Missing scientifically consequential choices become needs_user; missing routine implementation becomes a scoped preparation task. This is a worker/reviewer obligation, not a claim that the deterministic scheduler can evaluate scientific significance.
 
 - Scan in plan order but allow every independent ready task that fits resources; a blocked early task must not starve another branch.
 - Include every eligible model and dataset in the task contract.

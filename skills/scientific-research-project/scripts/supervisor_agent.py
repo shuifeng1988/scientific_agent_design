@@ -91,17 +91,32 @@ def intake(root: Path) -> dict:
         high_impact_questions.append("每个问题的预期方向、零结果和竞争解释是什么？")
     if not signals["stopping_rules"]:
         high_impact_questions.append("什么情况应暂停并与你讨论，什么低成本补充实验可自动加入？")
-    frozen = "PLAN-v" in plan and "Q00.01" in plan and "frozen" in combined
+    # Document vocabulary is an inventory signal, never proof of user dialogue
+    # or design approval. Legacy approvals require operator review, not guessing.
+    frozen = False
+    design_error = None
+    if (root / "registry/design.json").exists():
+        from research_workflow import verify_design
+        try:
+            frozen = bool(verify_design(root)["passed"])
+        except (ValueError, OSError, KeyError, TypeError) as exc:
+            design_error = str(exc)
+    if not frozen and not high_impact_questions:
+        high_impact_questions.append("文档已包含研究要素；请核对真实交流记录，确认这是否准确表达你的研究目的与范围？")
     return {
         "project": str(root),
-        "interpretation_ready": not high_impact_questions or frozen,
+        "interpretation_ready": frozen,
         "design_already_frozen": frozen,
+        "design_validation_error": design_error,
+        "inventory_only": True,
+        "next_action": "resume_approved_plan" if frozen else "discuss_with_user_or_review_existing_approval",
+        "question_policy": "Ask 1–3 focused questions with concise choices and unrestricted Other/free text; use built-in Other when supplied, allow uncertainty, then wait. Never treat a default as an answer or paste the full inventory.",
         "signals": signals,
         "high_impact_questions": [] if frozen else high_impact_questions,
         "confirmation_message": (
             "计划已有冻结记录；仍应在每个新科学问题开始前复核目标、终点和预期。"
             if frozen
-            else "请先回答 high_impact_questions，再冻结 01_PLAN.md。"
+            else "关键词不代表用户确认。新方向先分轮交流并确认；旧项目先核对已有批准证据，不重复索要已明确的决定。"
         ),
     }
 

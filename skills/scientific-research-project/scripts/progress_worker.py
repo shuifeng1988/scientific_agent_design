@@ -23,11 +23,26 @@ def main():
     output = a.request.with_name('proposal.json')
     raw = a.request.with_name('proposal.raw.txt')
     prompt = '''Use scientific-research-project Skill to advance this authorized research project.
+This noninteractive worker cannot clarify a new research purpose with the user. If a requested
+node lacks an agreed scientific direction, return needs_user with 1–3 focused questions for the
+outer conversation; do not invent answers, draft an entire new study, or freeze a design.
+For each such question, suggest concise choices plus an unrestricted Other/free-text route
+for the outer operator to render using its permitted interface; never infer a default answer.
+Do not treat automatic Skill selection as consent. Reuse existing actual approvals for unchanged tasks;
+ordinary method implementation within that authority does not require repeating intake.
 Read the five canonical documents and the supplied work request. You are a bounded planning/repair
 worker, not the scheduler. Prepare executable phase contracts for the requested existing nodes,
 write/test the necessary small implementation scripts and verify relevant source/input metadata.
-Read each task's actual 01_PLAN.md step and keep its canonical result path. For projects with
-registry/design.json, use research_workflow.py check before planning new computation. Formal
+Read each task's actual 01_PLAN.md step and keep its canonical result path.
+Read core_evidence.md when planning or interpreting central claims: distinguish primary sources,
+actual project measurements, independent corroboration and inference, with task/result locators.
+Skill attribution and technical integrity checks are not scientific evidence. Installation/resume
+does not revise a frozen design; route authorized design revisions through research_depth.md.
+Missing scientific design detail is not permission to invent it. Read research_depth.md: connect
+the node's purpose, inputs, method/controls, output schema, QC and evidence use to the approved
+task. Supply routine implementation within that scope; return needs_user for unresolved
+scientifically consequential choices. Do not mistake a broad task title for a detailed protocol.
+For projects with registry/design.json, use research_workflow.py check before planning new computation. Formal
 reports must use a task/run/plan-bound report manifest and render Markdown and Word from the same
 content with research_workflow.py render. QC covers the manifest, report receipt, reflection,
 README, Word, all summary tables and figures. This renderer formats real supplied analysis;

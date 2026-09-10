@@ -143,6 +143,38 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(rw.verify_design(self.root)["tasks"], 2)
         for n in rw.ROOT_DOCS:
             self.assertTrue((self.root / n).is_file())
+
+    def test_preliminary_appraisal_cannot_be_newly_frozen(self):
+        p, a = build_project(self.root, frozen=False)
+        appraisal_path = self.root / "provenance/appraisal.json"
+        appraisal = rw.read(appraisal_path)
+        appraisal["status"] = "preliminary_not_approved"
+        rw.atomic(appraisal_path, appraisal)
+        proposal = rw.read(p)
+        proposal["appraisal"] = rw.descriptor(appraisal_path, self.root)
+        rw.atomic(p, proposal)
+        approval = rw.read(a)
+        approval.update(proposal_sha256=rw.sha(p), appraisal_sha256=rw.sha(appraisal_path))
+        rw.atomic(a, approval)
+        with self.assertRaisesRegex(ValueError, "not ready for design freeze"):
+            rw.freeze(self.root, p, a)
+        self.assertFalse((self.root / "registry/design.json").exists())
+
+    def test_ready_appraisal_still_requires_exact_user_approval(self):
+        p, a = build_project(self.root, frozen=False)
+        appraisal_path = self.root / "provenance/appraisal.json"
+        appraisal = rw.read(appraisal_path)
+        appraisal["status"] = "ready_for_design_review"
+        rw.atomic(appraisal_path, appraisal)
+        proposal = rw.read(p)
+        proposal["appraisal"] = rw.descriptor(appraisal_path, self.root)
+        rw.atomic(p, proposal)
+        with self.assertRaisesRegex(ValueError, "cover proposal"):
+            rw.freeze(self.root, p, a)
+        approval = rw.read(a)
+        approval.update(proposal_sha256=rw.sha(p), appraisal_sha256=rw.sha(appraisal_path))
+        rw.atomic(a, approval)
+        self.assertTrue(rw.freeze(self.root, p, a)["passed"])
         self.assertTrue((self.root / "scripts/hooks/project_event.py").is_file())
 
     def test_plan_change_rejected(self):
