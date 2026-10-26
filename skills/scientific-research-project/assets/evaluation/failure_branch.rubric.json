@@ -1,0 +1,20 @@
+{
+  "case_id": "failure_branch",
+  "criteria": [
+    {
+      "id": "preserve_artifacts",
+      "criterion": "只恢复报告必要阶段，保留已验证计算产物",
+      "critical": true
+    },
+    {
+      "id": "unknown_job",
+      "criterion": "先核对已知作业身份，不能因查询超时重复提交",
+      "critical": true
+    },
+    {
+      "id": "independent_progress",
+      "criterion": "独立分支可推进，未通过正式报告/审阅前不标科研完成",
+      "critical": true
+    }
+  ]
+}

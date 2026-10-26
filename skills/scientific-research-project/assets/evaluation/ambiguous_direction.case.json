@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "case_id": "ambiguous_direction",
+  "synthetic": true,
+  "prompt": "用户只说：我想研究环境变化与实验系统稳定性的关系。没有说明系统、数据、实验单位或研究目的。请给出下一步回复与工作安排。"
+}

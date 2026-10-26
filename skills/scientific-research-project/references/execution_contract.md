@@ -1,0 +1,15 @@
+# Execution operating rules
+
+These requirements are retained from the original project Skill. Reference paths below are relative to the scientific-research-project package root.
+
+5. Before execution, verify data version/hash, software/checkpoint/version, host/environment, command, resources, split, endpoint, QC, and failure policy. Use configured, authorized hosts. The bundled driver uses Linux local/SSH user-level systemd; the scheduler still restricts host=local to explicitly lightweight tasks and GPU probing uses nvidia-smi. Do not claim general local GPU-heavy execution, other accelerator vendors, container/cluster-scheduler/cloud/API backends, or a completed hardware test without implementation and evidence. Obey the current project's compute rules.
+
+10. When continuous execution is authorized, keep the resident Supervisor service active across conversation turns. Generate an acyclic dependency table, dispatch every authorized ready task that fits current resources, reconcile completion, validate, interpret, update docs and dispatch again. Do not ask for repeated authorization already granted.
+
+11. Every Agent step follows: preserve failure evidence → diagnose cause → targeted repair → minimal verification → resume the failed phase → QC → advance. Never blindly rerun a broken command or recompute successful phases. Unknown SSH status must not cause duplicate submission. Bound attempts, time and resources; scientific/design anomalies require discussion, not automatic alteration. Read references/failure_recovery.md for the mandatory recovery evidence and stopping rules.
+
+12. With execution_policy=v2, use stable task/phase incident identities and default 3 repair-worker calls plus 3 verified retries per incident round; the initial execution and normal contract planning do not consume failure-recovery quotas. Track all AI calls as cost telemetry; stop repeated nonproductive planning after 2 proposals and report planning_stalled. Explicit user repair/continue instructions for named tasks trigger `intervene --node ID --reason REASON`, under the daemon lock after reconciling jobs; reset only those tasks. Status queries, service restarts and automated repairs do not reset budgets. Preserve cumulative attempts, job IDs and failure evidence. Do not impose a project-wide call quota in per-node mode or bypass scientific holds. Provider/account limits remain external.
+
+14. Compile the entire authorized model × stage matrix into stable independent nodes. Any automatic DAG expansion must match the operator-owned expansion_policy, inherit prerequisite and scope hashes, stay inside the registered result path, and pass cycle/duplicate checks. Keep the complete panel at the final barrier; do not silently omit a difficult model. Read references/execution_first_architecture.md.
+
+15. Report project progression separately from daemon health: running, planning_or_repairing, waiting_resources, stalled, complete. A live daemon with no advancing work is not a running benchmark. Preserve durable event delivery; document outage holds scientific publication, not unrelated verified artifact computation.

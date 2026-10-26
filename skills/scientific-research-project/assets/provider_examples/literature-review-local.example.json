@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "contract_version": "scientific-project-v1",
+  "bindings": {
+    "evidence": "literature-review-local"
+  },
+  "providers": {
+    "literature-review-local": {
+      "kind": "skill",
+      "version": "REGENERATE_WITH_literature_adapter.py_inspect",
+      "entrypoint": "/path/to/installed/literature-review/SKILL.md",
+      "hosts": ["codex"],
+      "instructions": "Use the installed literature-review method for the bounded evidence request. Preserve raw search and extraction outputs, actual tool/access limits, source records, contrary evidence and synthesis. Normalize to appraisal.json with literature_adapter.py; do not change the five root documents or approval gates."
+    }
+  }
+}

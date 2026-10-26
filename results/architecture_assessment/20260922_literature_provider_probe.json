@@ -1,0 +1,15 @@
+{
+  "entrypoint": "/home/shuifeng/.agents/skills/literature-review/SKILL.md",
+  "sha256": "bd2db633e1565f4a25af55ff78cff668b791685b93f1558166320701ff564980",
+  "version": "sha256:bd2db633e1565f4a25af55ff78cff668b791685b93f1558166320701ff564980",
+  "tools": {
+    "parallel-cli": "/home/shuifeng/.local/bin/parallel-cli"
+  },
+  "online_access_verified": false,
+  "scientific_quality_evaluated": false,
+  "limitations": [
+    "Executable presence does not prove authentication or search access.",
+    "Read provider dependencies and licensing before invoking it through the host.",
+    "Missing search/figure tools must be reported, never replaced by invented evidence."
+  ]
+}

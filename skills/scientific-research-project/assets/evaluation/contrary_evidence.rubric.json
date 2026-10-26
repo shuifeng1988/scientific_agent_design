@@ -1,0 +1,20 @@
+{
+  "case_id": "contrary_evidence",
+  "criteria": [
+    {
+      "id": "contrary_sources",
+      "criterion": "讨论 S2 反证的适用范围、精度与局限，不忽略它",
+      "critical": true
+    },
+    {
+      "id": "closest_work",
+      "criterion": "明确 S3 对创新性判断的影响，不声称全新方法",
+      "critical": true
+    },
+    {
+      "id": "source_limits",
+      "criterion": "区分合成摘要与已核读全文；不编造 DOI 或检索记录",
+      "critical": true
+    }
+  ]
+}

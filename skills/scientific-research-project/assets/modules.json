@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "contract_version": "scientific-project-v1",
+  "capabilities": {
+    "intake": {
+      "skill": "scientific-intake",
+      "role": "supervisor",
+      "references": [
+        "references/intake_protocol.md"
+      ],
+      "output": "A direction brief with real user answers, uncertainty and the next decision; no invented approval."
+    },
+    "evidence": {
+      "skill": "scientific-evidence",
+      "role": "researcher",
+      "references": [
+        "references/deep_research_gate.md",
+        "references/core_evidence.md",
+        "references/research_skill_bridge.md",
+        "references/research_depth.md"
+      ],
+      "output": "An appraisal with real search/source evidence, closest-work comparisons, contrary findings and method feasibility; use workflow_contract.md appraisal JSON."
+    },
+    "design": {
+      "skill": "scientific-design",
+      "role": "researcher",
+      "references": [
+        "references/design_contract.md",
+        "references/research_depth.md",
+        "references/core_evidence.md",
+        "references/workflow_contract.md",
+        "references/scientific_governance.md"
+      ],
+      "output": "Detailed proposed 00/01 and task cards, source-to-question-to-method links and unresolved choices; approval/freezing stays with the outer operator."
+    },
+    "execution": {
+      "skill": "scientific-execution",
+      "role": "executor",
+      "references": [
+        "references/execution_contract.md",
+        "references/continuous_execution.md",
+        "references/execution_first_architecture.md"
+      ],
+      "output": "Executable phase contracts and tested implementation for authorized task nodes; runtime alone launches durable jobs."
+    },
+    "recovery": {
+      "skill": "scientific-recovery",
+      "role": "executor",
+      "references": [
+        "references/execution_contract.md",
+        "references/failure_recovery.md",
+        "references/continuous_execution.md"
+      ],
+      "output": "An evidence-backed repair proposal with a real minimal test and preserved successful artifacts; no budget reset or scientific scope change."
+    },
+    "interpretation": {
+      "skill": "scientific-interpretation",
+      "role": "researcher",
+      "references": [
+        "references/reflection_protocol.md",
+        "references/core_evidence.md",
+        "references/continuous_execution.md",
+        "references/scientific_governance.md"
+      ],
+      "output": "Run-bound reflection with actual literature search, expected/observed comparison, alternatives and downstream impact."
+    },
+    "reporting": {
+      "skill": "scientific-reporting",
+      "role": "reporter",
+      "references": [
+        "references/project_schema.md",
+        "references/workflow_contract.md",
+        "references/scientific_governance.md",
+        "references/figure_quality_contract.md"
+      ],
+      "output": "Same-source README/Word, tables, figures, detailed methods/results/conclusions and complete run-bound QC evidence."
+    },
+    "visualization": {
+      "skill": "scientific-visualization",
+      "role": "reporter",
+      "references": [
+        "references/figure_quality_contract.md",
+        "references/project_schema.md",
+        "references/workflow_contract.md"
+      ],
+      "output": "Publication-ready, lineage-traceable result figures with reproducible source, vector/raster exports and bounded visual QC corrections."
+    },
+    "review": {
+      "skill": "scientific-review",
+      "role": "reviewer",
+      "references": [
+        "references/research_depth.md",
+        "references/core_evidence.md",
+        "references/project_schema.md",
+        "references/workflow_contract.md",
+        "references/scientific_governance.md"
+      ],
+      "output": "An evidence-linked adequate/revise/needs_user review; distinguish structural checks from scientific assessment."
+    }
+  }
+}

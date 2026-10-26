@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "contract_version": "scientific-project-v1",
+  "bindings": {
+    "evidence": "literature-review-local"
+  },
+  "providers": {
+    "literature-review-local": {
+      "kind": "skill",
+      "version": "sha256:bd2db633e1565f4a25af55ff78cff668b791685b93f1558166320701ff564980",
+      "entrypoint": "/home/shuifeng/.agents/skills/literature-review/SKILL.md",
+      "hosts": [
+        "codex"
+      ],
+      "instructions": "Read the installed skill and relevant dependencies. Use the real host search tools. Preserve raw search/source output, access limits and tool records. Return a canonical appraisal; run literature_adapter.py normalize. Do not replace root documents or scientific approvals."
+    }
+  }
+}

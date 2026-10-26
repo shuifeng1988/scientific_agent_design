@@ -2,6 +2,8 @@
 
 Read when preparing a deep appraisal or a substantive design review. This is an integration policy written for this project, not a copy of another Skill or its runtime. Keep scientific-research-project responsible for intake, approvals, five root documents, canonical task paths and Supervisor state.
 
+Project-specific replacements are resolved through `registry/providers.json` and [provider_contract.md](provider_contract.md). The examples below remain optional method sources, not hard-coded dependencies. An explicit unavailable selection is reported, never silently replaced.
+
 ## Select a bounded method provider
 
 Inspect the current session's installed-skill catalog before assuming a provider exists. Read the selected provider's entry and only the relevant workflow/reference files; obey tool permissions, user scope and attribution. Do not install software, invoke paid APIs, upload private material or launch extra agents merely because an upstream example says to.

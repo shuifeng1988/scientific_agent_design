@@ -161,7 +161,7 @@ def draft(root, spec):
     return dict(state="draft", documents=list(ROOT_DOCS[:2]))
 
 
-def freeze(root, proposal_path, approval_path):
+def freeze(root, proposal_path, approval_path, review_path=None):
     root = Path(root).resolve()
     require((root / "provenance/intake.json").is_file(), "intake draft required before freeze")
     require(not (root / "registry/design.json").exists(), "design already frozen; explicit amendment required")
@@ -190,6 +190,10 @@ def freeze(root, proposal_path, approval_path):
     for k in ("actor", "recorded_at", "message"):
         text(approval.get(k), "approval." + k)
     receipt(root, approval["evidence"])
+    from scientific_review import POLICY, design_subject, verify
+    require(p.get('review_policy') == POLICY, 'new designs require independent scientific review')
+    review_path = Path(review_path) if review_path else root / 'provenance/design_review.json'
+    verify(root, review_path, design_subject(root, proposal_path))
     # Receipt is provenance, not a cryptographic proof of human identity.
     baseline = root / "provenance/design" / sha(proposal_path)
     for name, content in p["documents"].items():
@@ -200,6 +204,7 @@ def freeze(root, proposal_path, approval_path):
     atomic(root / "registry/tasks.tsv", tasks_table(p["tasks"]))
     canonical = [{k: t[k] for k in TASK_FIELDS} for t in p["tasks"]]
     atomic(root / "registry/plan_tasks.json", canonical)
+    atomic(baseline / "plan_tasks.json", canonical)
     # Use this installed source explicitly, without generating a second implementation.
     scripts = str(Path(__file__).resolve().parent)
     hook = "import sys\nsys.path.insert(0, " + repr(scripts) + ")\nfrom project_events import main\nmain()\n"
@@ -210,7 +215,8 @@ def freeze(root, proposal_path, approval_path):
                   intake=descriptor(root / "provenance/intake.json", root),
                   documents={name: descriptor(baseline / name, root) for name in ROOT_DOCS},
                   active_scope={name: sha(root / name) for name in ROOT_DOCS[:2]},
-                  task_manifest=descriptor(root / "registry/plan_tasks.json", root))
+                  task_manifest=descriptor(baseline / "plan_tasks.json", root),
+                  review_policy=POLICY, design_review=descriptor(review_path, root))
     atomic(root / "registry/design.json", design)
     from project_events import emit
     for kind, ref in (('research.appraisal.completed', design['appraisal']),
@@ -222,17 +228,25 @@ def freeze(root, proposal_path, approval_path):
 
 def verify_design(root):
     root = Path(root).resolve()
+    transaction = root / 'provenance/amendment_transaction.json'
+    if transaction.exists():
+        require(read(transaction).get('stage') == 'committed', 'amendment recovery required before dispatch')
     d = read(root / "registry/design.json")
     require(d.get("policy") == "plan_results_v1", "unsupported workflow policy")
     for k in ("proposal", "approval", "appraisal", "approval_evidence", "intake", "task_manifest"):
         receipt(root, d[k])
     proposal = read(receipt(root, d["proposal"]))
+    require(d.get('review_policy') == proposal.get('review_policy'), 'design review policy drift')
     approval = read(receipt(root, d["approval"]))
     require(approval.get("decision") == "approved" and approval.get("proposal_sha256") == d["proposal"]["sha256"]
             and approval.get("appraisal_sha256") == d["appraisal"]["sha256"], "approval linkage changed")
     require(proposal["appraisal"] == d["appraisal"] and proposal["version"] == d["version"],
             "design/proposal mismatch")
     validate_appraisal(root, d["appraisal"])
+    if d.get('review_policy'):
+        from scientific_review import POLICY, verify, design_subject
+        require(d['review_policy'] == POLICY, 'unknown review policy')
+        verify(root, receipt(root, d['design_review']), design_subject(root, receipt(root, d['proposal'])))
     for name in ROOT_DOCS:
         require((root / name).is_file(), "missing root document: " + name)
         baseline = receipt(root, d["documents"][name])
@@ -246,6 +260,22 @@ def verify_design(root):
     require([{k: r[k] for k in TASK_FIELDS} for r in rows] == expected, "plan/registry mapping changed")
     validate_tasks(root, rows, (root / ROOT_DOCS[0]).read_text(), (root / ROOT_DOCS[1]).read_text())
     return dict(policy=d["policy"], version=d["version"], tasks=len(rows), passed=True)
+
+
+def design_for_version(root, version, task_id):
+    """Historical published tasks keep their original approved version and review policy."""
+    root = Path(root).resolve()
+    d = read(root / 'registry/design.json')
+    if version == d['version']:
+        return d
+    entries = [h for h in d.get('history', []) if h['version'] == version and task_id in h['preserved_tasks']]
+    require(len(entries) == 1, 'report task/plan mismatch: no preserved historical task')
+    old = read(receipt(root, entries[0]['design']))
+    proposal = read(receipt(root, old['proposal']))
+    previous = next((t for t in proposal['tasks'] if t['task_id'] == task_id), None)
+    require(previous is not None and all(task(root, task_id)[k] == previous[k] for k in TASK_FIELDS),
+            'historical task mapping changed')
+    return old
 
 
 def task(root, task_id):
@@ -263,7 +293,8 @@ def report_content(root, task_id, manifest_path, run_id=None):
     manifest_path = Path(manifest_path).resolve()
     require(manifest_path.is_relative_to(result), "report manifest outside task")
     m = read(manifest_path)
-    require(m.get("task_id") == task_id and m.get("plan_version") == design["version"], "report task/plan mismatch")
+    require(m.get("task_id") == task_id, "report task/plan mismatch")
+    design_for_version(root, m.get('plan_version'), task_id)
     text(m.get("run_id"), "report.run_id")
     if run_id is not None:
         require(m["run_id"] == run_id, "report run_id mismatch")
@@ -434,6 +465,8 @@ def validate_package(root, task_id, result_path, run_id):
     require(need <= actual_qc, "QC does not cover complete report evidence")
     for a in qc["artifacts"]:
         receipt(result, a)
+    from scientific_review import result_gate
+    result_gate(root, task_id, result_path, run_id)
     return dict(passed=True, task_id=task_id, run_id=run_id, artifacts=len(need))
 
 
@@ -444,6 +477,7 @@ def main():
     ap.add_argument("--spec", type=Path)
     ap.add_argument("--proposal", type=Path)
     ap.add_argument("--approval", type=Path)
+    ap.add_argument("--review", type=Path)
     ap.add_argument("--task-id")
     ap.add_argument("--manifest", type=Path)
     ap.add_argument("--run-id")
@@ -451,7 +485,7 @@ def main():
     if a.mode == "draft":
         out = draft(a.root, read(a.spec))
     elif a.mode == "freeze":
-        out = freeze(a.root, a.proposal, a.approval)
+        out = freeze(a.root, a.proposal, a.approval, a.review)
     elif a.mode == "check":
         out = verify_design(a.root)
     elif a.mode == "render":

@@ -19,6 +19,29 @@ import project_events as pe
 import supervisor_daemon as sd
 
 
+def fixture_review(root, subject, path):
+    """SYNTHETIC invocation evidence, never a real independent scientific review."""
+    import scientific_review as sr
+    root, path = Path(root), Path(path)
+    transcript = path.with_name(path.stem + '_transcript.txt')
+    rw.atomic(transcript, 'SYNTHETIC REVIEW FIXTURE ONLY; no model or researcher was invoked.')
+    invocation = path.with_name(path.stem + '_invocation.json')
+    reviewer = 'synthetic-reviewer-' + sr.subject_hash(subject)[:12]
+    rw.atomic(invocation, dict(invocation_id=reviewer, role='reviewer', provider='SYNTHETIC_FIXTURE',
+              subject_sha256=sr.subject_hash(subject), started_at='fixture-start', completed_at='fixture-end',
+              transcript=rw.descriptor(transcript, root)))
+    rw.atomic(path, dict(schema_version=1, subject=subject, reviewer_invocation_id=reviewer,
+              invocation=rw.descriptor(invocation, root), verdict='adequate', findings=[],
+              criteria={k: dict(verdict='adequate', rationale='SYNTHETIC test fixture only',
+                  evidence=subject['targets'][:1]) for k in sr.CRITERIA[subject['stage']]}))
+    return path
+
+
+def fixture_design_review(root, proposal):
+    from scientific_review import design_subject
+    return fixture_review(root, design_subject(root, proposal), Path(root) / 'provenance/design_review.json')
+
+
 def build_project(root, frozen=True):
     root = Path(root)
     rw.draft(root, dict(project="# Draft fixture question Q01\n", plan="# Draft steps for fixture\n"))
@@ -40,7 +63,8 @@ def build_project(root, frozen=True):
     docs = {name: "# SYNTHETIC workflow test\n" for name in rw.ROOT_DOCS}
     docs["00_PROJECT.md"] += "Q01: Test plan-to-results correspondence. No scientific claim.\n"
     docs["01_PLAN.md"] += "\n".join(t["task_id"] + " " + t["result_path"] for t in tasks)
-    proposal = dict(version="fixture-v1", documents=docs, tasks=tasks,
+    proposal = dict(version="fixture-v1", review_policy='independent_review_v1',
+                    author_invocation_id='synthetic-design-author', documents=docs, tasks=tasks,
                     appraisal=rw.descriptor(root / "provenance/appraisal.json", root))
     proposal_path = root / "provenance/proposal.json"
     rw.atomic(proposal_path, proposal)
@@ -49,6 +73,7 @@ def build_project(root, frozen=True):
               appraisal_sha256=proposal["appraisal"]["sha256"], actor="TEST_FIXTURE_NOT_HUMAN",
               message="Synthetic approval used only for tests", recorded_at="2026-09-09",
               evidence=rw.descriptor(root / "provenance/user_message.txt", root)))
+    fixture_design_review(root, proposal_path)
     if frozen:
         rw.freeze(root, proposal_path, approval_path)
     return proposal_path, approval_path
@@ -80,6 +105,7 @@ def prepare_report(root, task_id, run_id, language="en"):
         sections = {k: "合成测试：" + k + "，不代表科研结论。" for k in rw.SECTIONS}
         sections["results"] = f"合成样本数为 {count}，均值为 {mean}。"
     manifest = dict(task_id=task_id, run_id=run_id, plan_version="fixture-v1", language=language,
+          author_invocation_id='synthetic-result-author',
           title="SYNTHETIC WORKFLOW ACCEPTANCE", host="local", environment="Python unit-test fixture",
           command=[sys.executable, "-B", str(Path(__file__).resolve()), "fixture", str(root), task_id, "run"],
           software=[dict(name="Python", version=sys.version.split()[0],
@@ -107,6 +133,9 @@ def finish_report(root, task_id, run_id):
              "_evidence/report_receipt.json", "_evidence/reflection.json"]
     rw.atomic(result / "_evidence/qc.json", dict(run_id=run_id, passed=True, fixture=True,
               artifacts=[rw.descriptor(result / p, result) for p in paths]))
+    from scientific_review import result_subject
+    fixture_review(root, result_subject(root, task_id, str(result.relative_to(root)), run_id),
+                   result / '_evidence/scientific_review.json')
     return result
 
 
@@ -174,6 +203,7 @@ class WorkflowTests(unittest.TestCase):
         approval = rw.read(a)
         approval.update(proposal_sha256=rw.sha(p), appraisal_sha256=rw.sha(appraisal_path))
         rw.atomic(a, approval)
+        fixture_design_review(self.root, p)
         self.assertTrue(rw.freeze(self.root, p, a)["passed"])
         self.assertTrue((self.root / "scripts/hooks/project_event.py").is_file())
 

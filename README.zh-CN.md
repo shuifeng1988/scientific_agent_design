@@ -230,11 +230,28 @@ python3 "$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py" "$
 
 此检查仅验证 Skill 结构，不验证科研分析、Word 生成或服务器运行。
 
+#### 7.2.2 `parallel-cli`：literature-review 的主检索工具
+
+本项目首个外部文献 provider 使用已安装的 `literature-review`。该 Skill 将 `parallel-cli search` 作为广泛学术检索、将 `parallel-cli extract` 作为网页/论文内容提取的主工具；因此它是完整 literature-review 流程的主要依赖，但不是本项目 evidence 接口的唯一数据源。缺少它时可以使用明确记录的数据库 Skill 或人工提供的来源，但不能把不完整检索标成完整文献综述。
+
+`parallel-cli` 不是普通的 PyPI `parallel-cli` 包。Linux/macOS 使用 Parallel 官方安装器；备用方式是 `uv`。安装后需要登录或提供你自己的 `PARALLEL_API_KEY`。不要把 API key 写入 Git、五个根文件、provider 配置或结果目录。
+
+```bash
+curl -fsSL https://parallel.ai/install.sh | bash
+# Fallback installation: uv tool install "parallel-web-tools[cli]"
+export PATH="$HOME/.local/bin:$PATH"
+parallel-cli --version
+parallel-cli login
+parallel-cli auth
+```
+
+安装器写入用户目录 `~/.local/share/parallel-cli`，并在 `~/.local/bin/parallel-cli` 建立入口；若 `parallel-cli` 仍找不到，重新打开 shell 或确认 PATH。`auth` 通过后才可执行在线检索；登录状态和 API 配额仍属于外部服务条件。项目 provider 接入前运行 `literature_adapter.py inspect`，正式交接必须保存原始输出、实际工具、访问限制和来源收据。
+
 #### 7.2.1 重装成功，为什么已有项目的 PROJECT / PLAN 没变？
 
 源码更新、安装副本更新、项目文档修订、冻结基线迁移是四件不同的事。复制 Skill 或重新启动 Supervisor 不会重新编写已有根文件；`draft` / `freeze` 使用 Agent 提供的内容，不会自动把简短方案扩写为详细科学设计。模板指导写作，也不是自动渲染已有项目的程序。
 
-先核对实际读取的 Skill 路径和文件，再检查项目的 `registry/design.json`、当前 00/01 和已有修订草案。`check` 通过只说明基线与哈希一致，不说明计划足够详细。已经冻结的旧项目需要明确的修订工作：保留原始记录，写出实际新版项目论证和每一步详细方案，展示差异及待决问题，再经所需确认更新基线；不能删除注册表或篡改旧批准记录来绕过检查。当前没有自动应用修订的一键命令。
+先核对实际读取的 Skill 路径和文件，再检查项目的 `registry/design.json`、当前 00/01 和已有修订草案。`check` 通过只说明基线与哈希一致，不说明计划足够详细。已经冻结的旧项目需要明确的修订工作：保留原始记录，写出实际新版项目论证和每一步详细方案，展示差异及待决问题，再经所需确认更新基线；不能删除注册表或篡改旧批准记录来绕过检查。v0.8.0 提供经过审阅与真实批准的 `plan_amendment.py apply` 事务，保留旧基线和已完成结果；运行前需核清作业并释放 daemon 锁，具体限制见[科研治理协议](skills/scientific-research-project/references/scientific_governance.md)。
 
 在目标项目中新一轮明确调用：
 
@@ -394,7 +411,7 @@ research_scripts="$HOME/git/scientific_agent_design/skills/scientific-research-p
 research_project="/absolute/path/to/new-project"
 python3 -m pip install -r "$research_scripts/requirements-report.txt"
 python3 "$research_scripts/research_workflow.py" draft --root "$research_project" --spec "$research_project/provenance/draft.json"
-python3 "$research_scripts/research_workflow.py" freeze --root "$research_project" --proposal "$research_project/provenance/proposal.json" --approval "$research_project/provenance/approval.json"
+python3 "$research_scripts/research_workflow.py" freeze --root "$research_project" --proposal "$research_project/provenance/proposal.json" --approval "$research_project/provenance/approval.json" --review "$research_project/provenance/design_review.json"
 python3 "$research_scripts/research_workflow.py" check --root "$research_project"
 python3 "$research_scripts/bootstrap_supervisor.py" --root "$research_project" --dependencies "$research_project/registry/dependencies.tsv" --hosts "$research_project/registry/hosts.json"
 ```
@@ -411,6 +428,36 @@ python3 "$research_scripts/research_workflow.py" validate-package --root "$resea
 最终报告清单已生成验收收据时，工具拒绝静默覆盖；批次草案不应冒充最终报告。修订须保留旧运行证据并经审查处理。程序不会自行编造科研结论、文献或用户批准。
 
 旧项目不会自动获得这些新门槛。不要对已有项目直接运行 draft/freeze：工具拒绝覆盖已有注册表和钩子。迁移须保留原计划、编号、结果、运行状态和审批记录，审查后接入；不能删除注册表或重跑已完成研究来绕过检查。
+
+### 7.7 模块化能力与外部 Skill / sub-agent 替换
+
+核心入口继续保持五个根文件、先澄清后调研和规划、每任务唯一成果目录、详细方法与图表结论、真实证据、有限恢复和原有验收要求。重构范围包括未在此逐条列出的现有特性，见[特性保留清单](documentation/FEATURE_PRESERVATION.md)和[模块化架构](documentation/MODULAR_ARCHITECTURE.md)。
+
+现在提供九个独立阶段/能力 Skill 和五种平台中立 Agent 角色，其中 `scientific-visualization` 专门负责发表级结果图，`scientific-schematics` 适用于概念图和流程图。现有单核心包安装仍可工作；若需独立技能发现和完整 Claude 角色定义，在检查目标副本没有独立修改后安装整套目录。Codex：
+
+```bash
+research_source="$HOME/git/scientific_agent_design"
+codex_skills="$HOME/.codex/skills"
+mkdir -p "$codex_skills"
+for research_module in "$research_source"/skills/scientific-*; do
+  cp -a "$research_module" "$codex_skills/"
+done
+```
+
+Claude Code（在目标科研项目目录中）：
+
+```bash
+research_source="$HOME/git/scientific_agent_design"
+mkdir -p .claude/skills .claude/agents
+for research_module in "$research_source"/skills/scientific-*; do
+  cp -a "$research_module" .claude/skills/
+done
+cp "$research_source"/adapters/claude/scientific-*.md .claude/agents/
+```
+
+项目可通过 registry/providers.json 只替换 evidence 等某个能力的 Skill/sub-agent；其他方法、根文件、结果路径和验收继续沿用。按照[provider 接口](skills/scientific-research-project/references/provider_contract.md)配置实际入口/版本/适用平台，使用 module_provider.py resolve、prepare、check-output 完成交接。选择第三方方法不自动安装或运行它，也不授予额外权限。外部方法不可用时明确报错，不悄悄换回内置方法。
+
+后台 Codex worker 已接入 execution/recovery 路由。通用研究 provider 由实际宿主调用；没有新增通用 Claude/API 常驻运行器。安装升级不修改或重跑已有科研项目。真实对话、科学深度与在线第三方兼容仍需实测。
 
 ## 8. 仓库导航
 
@@ -432,4 +479,6 @@ archive/                           # 历史资料
 
 ## 9. 版本
 
-当前源码版本：**0.6.3**，见 [`VERSION`](VERSION)。保留分轮选项式接洽和深度调研要求，进一步明确核心证据来源、借鉴的科研 Skill，以及旧项目“安装更新—完整替换草稿—审阅—基线迁移”的区别；同步模板与 Supervisor 指令。新冻结会拒绝显式未就绪的调研状态，仍兼容缺少该字段的旧格式。实质研究质量需要真实检索与审阅，不能由状态或结构校验保证。没有新增执行后端或自动迁移命令；更新安装副本不自动迁移或重跑旧项目。
+当前源码版本：**0.8.0**，见 [`VERSION`](VERSION)。保留模块化的共享核心、8 个阶段 Skill、5 类角色与原有项目特性，增加版本绑定的独立科研审阅、只读 Codex 审阅入口、可恢复的批准方案修订、必要/可选补充分析、增强 provider 交接和科研行为评价工具。新方案启用审阅门槛，旧冻结基线保留已有行为直到明确迁移。
+
+使用说明见[科研治理协议](skills/scientific-research-project/references/scientific_governance.md)，变更及验证边界见[修订记录](results/architecture_assessment/20260922_revision_v0.8.0.md)。首个外部文献 provider 采用已安装的 `literature-review`，通过 `literature_adapter.py` 接入 evidence 阶段；它保留原始检索/综合输出并转换为既有 appraisal 交接。当前仅完成入口和离线交接验证，尚未验证在线文献质量、完整 Claude 运行链或多 Agent 相对单 Agent 的质量/成本收益。安装更新不自动迁移或重跑旧项目。

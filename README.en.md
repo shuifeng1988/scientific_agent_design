@@ -230,11 +230,28 @@ python3 "$HOME/.codex/skills/.system/skill-creator/scripts/quick_validate.py" "$
 
 This validates Skill structure, not scientific analysis, Word generation, or server execution.
 
+#### 7.2.2 `parallel-cli`: the primary search tool for literature-review
+
+The first external literature provider in this project uses the installed `literature-review` Skill. That Skill uses `parallel-cli search` for broad academic discovery and `parallel-cli extract` for webpage/paper extraction; it is therefore the main dependency of the complete literature-review workflow, but not the only possible source for this project's evidence interface. If it is unavailable, use explicitly recorded database Skills or operator-supplied sources, and do not label an incomplete search as a complete literature review.
+
+`parallel-cli` is not the ordinary PyPI package named `parallel-cli`. On Linux/macOS use the official Parallel installer; the fallback is `uv`. After installation, log in or provide your own `PARALLEL_API_KEY`. Never put an API key in Git, the five root documents, provider configuration or result directories.
+
+```bash
+curl -fsSL https://parallel.ai/install.sh | bash
+# Fallback installation: uv tool install "parallel-web-tools[cli]"
+export PATH="$HOME/.local/bin:$PATH"
+parallel-cli --version
+parallel-cli login
+parallel-cli auth
+```
+
+The installer writes to `~/.local/share/parallel-cli` and creates `~/.local/bin/parallel-cli`; reopen the shell or check PATH if the command is still missing. Online search requires successful `auth`, and login state/API quota remain external service conditions. Before binding the project provider, run `literature_adapter.py inspect`; a formal handoff must retain raw output, actual tools, access limits and source receipts.
+
 #### 7.2.1 Why are an existing PROJECT / PLAN unchanged after reinstallation?
 
 Source updates, installed-copy updates, scientific-document revision and frozen-baseline migration are four different operations. Copying a Skill or restarting the Supervisor does not rewrite existing root documents. `draft` / `freeze` consume content supplied by the Agent; they do not automatically expand a shallow proposal into a detailed scientific design. Templates guide writing rather than automatically rendering existing projects.
 
-First check the actual Skill path/content, then the project's `registry/design.json`, current 00/01 and existing amendment drafts. A passing `check` establishes baseline/hash consistency, not adequate scientific detail. A frozen project needs explicit revision work: preserve original records, write the actual replacement rationale and detailed steps, show differences and unresolved choices, then update the baseline after the required confirmation. Do not delete registries or alter old approval records to bypass checks. There is currently no one-command automatic amendment application.
+First check the actual Skill path/content, then the project's `registry/design.json`, current 00/01 and existing amendment drafts. A passing `check` establishes baseline/hash consistency, not adequate scientific detail. A frozen project needs explicit revision work: preserve original records, write the actual replacement rationale and detailed steps, show differences and unresolved choices, then update the baseline after the required confirmation. Do not delete registries or alter old approval records to bypass checks. v0.8.0 provides a reviewed, actually approved `plan_amendment.py apply` transaction that preserves old baselines and completed results. Reconcile jobs and release the daemon lock first; see the [scientific governance protocol](skills/scientific-research-project/references/scientific_governance.md) for its conservative limits.
 
 Explicitly invoke in a new turn in the target project:
 
@@ -403,7 +420,7 @@ research_scripts="$HOME/git/scientific_agent_design/skills/scientific-research-p
 research_project="/absolute/path/to/new-project"
 python3 -m pip install -r "$research_scripts/requirements-report.txt"
 python3 "$research_scripts/research_workflow.py" draft --root "$research_project" --spec "$research_project/provenance/draft.json"
-python3 "$research_scripts/research_workflow.py" freeze --root "$research_project" --proposal "$research_project/provenance/proposal.json" --approval "$research_project/provenance/approval.json"
+python3 "$research_scripts/research_workflow.py" freeze --root "$research_project" --proposal "$research_project/provenance/proposal.json" --approval "$research_project/provenance/approval.json" --review "$research_project/provenance/design_review.json"
 python3 "$research_scripts/research_workflow.py" check --root "$research_project"
 python3 "$research_scripts/bootstrap_supervisor.py" --root "$research_project" --dependencies "$research_project/registry/dependencies.tsv" --hosts "$research_project/registry/hosts.json"
 ```
@@ -420,6 +437,36 @@ python3 "$research_scripts/research_workflow.py" validate-package --root "$resea
 Once a final report receipt exists, the tool refuses silent overwrite; batch drafts must not masquerade as final reports. Revisions require preserving previous run evidence and reviewed handling. The program does not invent conclusions, literature, or user approvals.
 
 Existing projects do not automatically gain these new gates. Do not run draft/freeze directly on an existing project: the tool refuses to overwrite its registry and hook. Migration must preserve the original plan, IDs, results, running-job state, and approval records and be reviewed before adoption. Do not delete registries or rerun completed research to bypass checks.
+
+### 7.7 Modular capabilities and replaceable skills/subagents
+
+The core retains five root documents, clarification before appraisal/design, one result path per task, detailed methods and results with tables/figures/conclusions, actual evidence, bounded recovery and existing acceptance. Preservation includes existing features not individually listed here; see the [feature preservation matrix](documentation/FEATURE_PRESERVATION.md) and [architecture guide](documentation/MODULAR_ARCHITECTURE.md) (Chinese).
+
+Nine stage/capability Skills and five host-neutral Agent roles are available. `scientific-visualization` handles publication-ready result figures, while `scientific-schematics` is for conceptual diagrams and flowcharts. The existing single-core installation remains self-contained. For separate Skill discovery and complete Claude role definitions, install the bundle after checking for independent destination edits. Codex:
+
+```bash
+research_source="$HOME/git/scientific_agent_design"
+codex_skills="$HOME/.codex/skills"
+mkdir -p "$codex_skills"
+for research_module in "$research_source"/skills/scientific-*; do
+  cp -a "$research_module" "$codex_skills/"
+done
+```
+
+Claude Code (from the target research project directory):
+
+```bash
+research_source="$HOME/git/scientific_agent_design"
+mkdir -p .claude/skills .claude/agents
+for research_module in "$research_source"/skills/scientific-*; do
+  cp -a "$research_module" .claude/skills/
+done
+cp "$research_source"/adapters/claude/scientific-*.md .claude/agents/
+```
+
+A project can replace only a capability such as evidence using registry/providers.json. Other methods, root documents, task/result paths and acceptance remain unchanged. Follow the [provider contract](skills/scientific-research-project/references/provider_contract.md) to declare the actual entry/version/hosts and use module_provider.py resolve, prepare and check-output. Provider selection neither installs/invokes it nor grants additional authority. Explicit unavailable providers produce a blocker rather than a silent fallback.
+
+The Codex background worker now resolves execution/recovery providers. General research providers are invoked by the actual host; no generic Claude/API daemon runner is added. Installation does not change or rerun existing research projects. Real dialogue, scientific depth and online third-party compatibility still require live evaluation.
 
 ## 8. Repository navigation
 
@@ -441,4 +488,6 @@ Existing dated DOCX/PDF documents and figures may reflect earlier designs. Use t
 
 ## 9. Version
 
-Current source version: **0.6.3**, recorded in [`VERSION`](VERSION). Retains choice-assisted intake and deep appraisal, and makes central evidence sources, borrowed research-skill designs and the distinction between installation, complete replacement drafts, review and baseline migration explicit; templates and Supervisor instructions are aligned. New freezes reject explicitly unready appraisal status while retaining compatibility with older records lacking that field. Substantive research quality requires actual search and review; status/schema checks cannot guarantee it. No execution backend or automatic migration command is added, and installation updates do not automatically migrate or rerun existing projects.
+Current source version: **0.8.0**, recorded in [`VERSION`](VERSION). Retains the shared core, eight stage Skills, five roles and existing project characteristics, and adds version-bound independent scientific review, a read-only Codex review entry, recoverable approved amendments, required/optional supplements, stronger provider handoffs and scientific behavior evaluation tools. New designs enforce review; frozen legacy baselines retain their behavior until deliberately migrated.
+
+See the [scientific governance protocol](skills/scientific-research-project/references/scientific_governance.md) and [revision/validation record](results/architecture_assessment/20260922_revision_v0.8.0.md). The first external literature provider is the installed `literature-review` skill, connected to the evidence stage through `literature_adapter.py`; it preserves raw retrieval/synthesis output and converts it to the existing appraisal handoff. Only entry inspection and offline handoff validation are complete. Online literature quality, a complete Claude runtime chain and multi-agent quality/cost gains remain unverified. Installation updates do not automatically migrate or rerun existing projects.

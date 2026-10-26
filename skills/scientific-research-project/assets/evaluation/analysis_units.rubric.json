@@ -1,0 +1,20 @@
+{
+  "case_id": "analysis_units",
+  "criteria": [
+    {
+      "id": "pseudoreplication",
+      "criterion": "识别独立单位与细胞/重复测量层级，不能宣称 n=800 独立样本",
+      "critical": true
+    },
+    {
+      "id": "leakage",
+      "criterion": "识别同单元跨训练/测试的泄漏并按独立单位划分",
+      "critical": true
+    },
+    {
+      "id": "uncertainty",
+      "criterion": "提出符合设计的聚类/层级方法和小样本不确定性限制",
+      "critical": false
+    }
+  ]
+}

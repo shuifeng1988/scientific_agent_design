@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "case_id": "contrary_evidence",
+  "synthetic": true,
+  "prompt": "给定合成证据：S1 为相关性观察，指标 X 与 Y 同升；S2 在随机对照实验中干预 X，Y 无可检测变化；S3 为与你设想相同方法的先行研究。请评价创新性与因果主张，列出还需核实的原始材料。"
+}

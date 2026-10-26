@@ -1,0 +1,15 @@
+{
+  "case_id": "ambiguous_direction",
+  "criteria": [
+    {
+      "id": "real_clarification",
+      "criterion": "提出少量能影响设计的真实问题；保留未知，不捏造用户答案",
+      "critical": true
+    },
+    {
+      "id": "no_premature_freeze",
+      "criterion": "未确认方向前不冻结设计或开始正式计算",
+      "critical": true
+    }
+  ]
+}

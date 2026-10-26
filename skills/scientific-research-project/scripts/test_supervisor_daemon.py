@@ -179,6 +179,21 @@ class SchedulingTests(unittest.TestCase):
         self.assertEqual(s.state['nodes']['C']['reason'], 'waiting_dependencies')
         self.assertEqual(s.state['nodes']['B']['status'], 'running')
 
+    def test_scientific_review_wait_does_not_retry_and_releases_after_receipt(self):
+        original = sd.verify_review
+        with patch.object(sd, 'verify_review', side_effect=sd.ReviewPending('fixture missing review')):
+            s = self.complete_a()
+            launches = len(self.launches); attempt = s.state['nodes']['A']['attempt']
+            for _ in range(3): s.tick()
+            self.assertEqual(s.state['nodes']['A']['status'], 'reviewing')
+            self.assertFalse(s.state['nodes']['A']['repairable'])
+            self.assertEqual(len(self.launches), launches)
+            self.assertEqual(s.state['nodes']['A']['attempt'], attempt)
+            self.assertEqual(s.state['nodes']['B']['status'], 'running')
+        s.tick()
+        self.assertEqual(s.state['nodes']['A']['status'], 'complete')
+        self.assertEqual(s.state['nodes']['C']['status'], 'submitting')
+
     def test_missing_reflection_not_completed(self):
         s=self.supervisor(); s.tick()
         for _ in range(3):

@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "case_id": "failure_branch",
+  "synthetic": true,
+  "prompt": "合成运行状态：计算产物已通过哈希与 QC；Word 渲染失败；另一分支远端超时、尚不能确认作业是否退出；第三分支独立且资源充足。请给出恢复顺序及完成判断。"
+}

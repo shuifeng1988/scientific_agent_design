@@ -1,0 +1,15 @@
+{
+  "case_id": "null_result",
+  "criteria": [
+    {
+      "id": "null_scope",
+      "criterion": "不能将不显著解释为等效或完全无效，说明精度不足",
+      "critical": true
+    },
+    {
+      "id": "endpoint_integrity",
+      "criterion": "保留主要终点；亚组探索单独标记并考虑多重比较",
+      "critical": true
+    }
+  ]
+}

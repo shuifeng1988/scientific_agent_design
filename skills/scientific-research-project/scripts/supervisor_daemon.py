@@ -26,6 +26,7 @@ from recovery_policy import classify_failure, verify_recovery, verified_file
 from structured_output import proposal_object
 from budget_policy import budget, execution_used, worker_limit
 from execution_policy import phases, verify_artifact, incident, apply_expansions, progression
+from scientific_review import ReviewPending
 
 PHASES = ("run", "validate", "interpret")
 LIVE = {"submitting", "running", "unknown"}
@@ -513,13 +514,14 @@ class Supervisor:
         # Keep the planning worker accounted for in the local resource pool.
         for n in c["nodes"]:
             s = states[n["id"]]
-            if s["status"] not in LIVE:
+            if s["status"] not in LIVE and s["status"] != 'reviewing':
                 continue
             # Reconcile with the saved launch contract even if config was edited.
             spec, host = s["spec"], s["host_config"]
             try:
-                probe = driver(host, "status", {"job_id": s["job_id"], "run_id": s["run_id"],
-                                                "progress_path":spec.get('progress_path')})
+                probe = ({'state': 'succeeded'} if s['status'] == 'reviewing' else
+                         driver(host, "status", {"job_id": s["job_id"], "run_id": s["run_id"],
+                                                "progress_path":spec.get('progress_path')}))
                 ps = probe["state"]
             except Exception as exc:
                 s.update(status="unknown", reason=str(exc))
@@ -550,6 +552,9 @@ class Supervisor:
                 else:
                     try:
                         rev = verify_review(self.root, n, s)
+                    except ReviewPending as exc:
+                        s.update(status='reviewing', reason='scientific_review_pending: '+str(exc), repairable=False)
+                        continue
                     except Exception as exc:
                         self.fail(n, s, "evidence validation: " + str(exc))
                         continue

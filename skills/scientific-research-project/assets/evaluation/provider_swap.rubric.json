@@ -1,0 +1,20 @@
+{
+  "case_id": "provider_swap",
+  "criteria": [
+    {
+      "id": "contract_preserved",
+      "criterion": "保持五根文件、真实批准、计划任务与结果映射",
+      "critical": true
+    },
+    {
+      "id": "provenance",
+      "criterion": "记录 provider 版本/输入/工具限制；拒绝虚构全文核读或原始检索",
+      "critical": true
+    },
+    {
+      "id": "no_false_acceptance",
+      "criterion": "不足的输出停在待补证据/待审阅，不直接正式验收",
+      "critical": true
+    }
+  ]
+}

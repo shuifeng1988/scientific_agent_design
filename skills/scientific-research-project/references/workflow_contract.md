@@ -1,4 +1,4 @@
-# Implemented plan-to-results contract (v0.6.0)
+# Implemented plan-to-results contract (v0.8.0)
 
 Read this before using `workflow_policy=plan_results_v1`. This contract implements the README lifecycle; it is not a domain analysis engine, an authentication system, or a substitute for scientific review.
 
@@ -9,7 +9,7 @@ Read this before using `workflow_policy=plan_results_v1`. This contract implemen
 3. Conduct actual searches and appraise the question. Preserve readable appraisal/method options and actual search-output evidence in project provenance.
 4. Prepare the proposed five formal documents and complete task list; show the user the actual content, important choices, uncertainties and costs.
 5. Capture the real user decision separately, bound to the exact proposal and appraisal. Never let an AI worker fabricate approval, transcribe consent not given, or edit the evidence to fit a new proposal.
-6. Run `research_workflow.py freeze --root PROJECT --proposal FILE --approval FILE` after approval. Missing, stale or inconsistent evidence blocks freezing. The command writes five baseline documents, task registry, design receipts, the event hook and appraisal/discussion journal entries. The events record already-completed research/discussion; the command does not perform them.
+6. Obtain the version-bound independent review described in scientific_governance.md. Run `research_workflow.py freeze --root PROJECT --proposal FILE --approval FILE --review REVIEW_JSON` after actual approval. Missing, stale or inconsistent evidence blocks freezing. The command writes five baseline documents, task registry, design receipts, the event hook and appraisal/discussion journal entries. The events record already-completed research/discussion; the command does not perform them.
 
 All receipt objects have `{"path": "project-relative/file", "sha256": "actual SHA-256"}`. Receipt paths resolve inside the project; traversal and external symlinks are rejected. Large remote data need not be duplicated: reference a locally hashed provenance manifest containing the actual remote location, source/version, transfer/access command, and verified remote checksum. This validates the manifest, not remote bytes; the data worker must perform and record remote verification.
 
@@ -28,6 +28,7 @@ The gate checks these records and hashes. It cannot verify that two records repr
 ### Proposal JSON
 
 - `version`: nonempty approved plan version.
+- New proposals: `review_policy: independent_review_v1` and actual `author_invocation_id`; see scientific_governance.md for the bound independent review.
 - `documents`: exactly five keys, 00_PROJECT.md through 04_STATUS.md, containing proposed Markdown.
 - `appraisal`: receipt for the appraisal JSON.
 - `tasks`: complete list, each with string fields `task_id`, `question_id`, `title`, `result_path`, `required_models`, `required_data`. Use explicit not-applicable explanations when a study has no models.
@@ -110,3 +111,5 @@ python3 -B -m unittest discover -p 'test_*.py' -v
 ```
 
 The tested interpreter is Python 3.13. Tests include draft/freeze, stale approvals, plan drift, wrong paths/runs, missing or tampered Word/tables, event replay, scientific holds, recovery/regression, and a real small subprocess dependency chain with scheduler reconstruction. Fixture data, searches and user decisions are explicitly SYNTHETIC and are never project research evidence. Driver/resource and monitoring interfaces are mocked in that chain; it does not certify actual systemd/SSH hardware, online Codex/Claude, or an entire scientific study. Real deployments need native driver/monitor checks and domain-specific acceptance separately.
+
+New strict report manifests record the actual `author_invocation_id`. Formal result acceptance additionally verifies `_evidence/scientific_review.json` and registered required supplements. Existing frozen legacy baselines keep their original review behavior. See scientific_governance.md for all receipt fields and amendment/recovery commands.
