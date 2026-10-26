@@ -1,6 +1,6 @@
 # Scientific Research Agent Design：自动化科研项目执行与报告
 
-[英文说明](README.en.md)
+[英文说明](README.md)
 
 本项目是一套面向真实科研项目的自动化科研 Skill 与 Supervisor Agent 框架，将研究问题定义、文献调研、方案设计、软件与数据准备、任务执行、质量控制、结果解释和后续研究组织成连续的科研工作流程。它帮助研究人员从总体目标出发，建立清晰的研究计划，管理执行进度，并积累可审计、可复现、便于人工阅读的研究成果。
 
@@ -463,7 +463,7 @@ cp "$research_source"/adapters/claude/scientific-*.md .claude/agents/
 
 ```text
 README.zh-CN.md                    # 中文介绍与安装
-README.en.md                       # 对应的英文介绍与安装
+README.md                           # 对应的英文介绍与安装
 VERSION                            # 当前版本号
 skills/scientific-research-project/
   SKILL.md                         # 核心行为协议

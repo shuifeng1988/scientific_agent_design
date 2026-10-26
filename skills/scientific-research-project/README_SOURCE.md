@@ -4,7 +4,7 @@ This folder is a runnable Skill package, not the canonical development repositor
 
 Canonical repository / 源码仓库: https://github.com/shuifeng1988/scientific_agent_design
 
-The source checkout's README.zh-CN.md and README.en.md contain the full introduction and installation instructions. Local unpushed changes may be newer than GitHub. / 完整介绍与安装方法见源码目录的 README.zh-CN.md 和 README.en.md；本地未推送修改可能新于 GitHub。
+The source checkout's README.zh-CN.md and README.md contain the full introduction and installation instructions. Local unpushed changes may be newer than GitHub. / 完整介绍与安装方法见源码目录的 README.zh-CN.md 和 README.md；本地未推送修改可能新于 GitHub。
 
 Current installed rules / 当前已安装规范:
 

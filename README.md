@@ -472,7 +472,7 @@ The Codex background worker now resolves execution/recovery providers. General r
 
 ```text
 README.zh-CN.md                    # Chinese introduction and installation
-README.en.md                       # Corresponding English guide
+README.md                           # English introduction and installation
 VERSION                            # Current version
 skills/scientific-research-project/
   SKILL.md                         # Core operating contract
